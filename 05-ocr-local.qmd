@@ -1,0 +1,3 @@
+# Local OCR
+
+Tesseract with magick preprocessing for faded pages.

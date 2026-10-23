@@ -1,0 +1,7 @@
+# Setup
+
+## Packages and renv
+
+## Tesseract
+
+## API keys

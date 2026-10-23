@@ -1,0 +1,3 @@
+# Page Extraction
+
+Convert each PDF to zero-padded 300 DPI PNGs (`vol1_p001.png`).

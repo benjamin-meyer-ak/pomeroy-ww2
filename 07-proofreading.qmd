@@ -1,0 +1,3 @@
+# Proofreading
+
+Low-confidence flags, custom dictionary, and side-by-side review.

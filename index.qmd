@@ -1,0 +1,7 @@
+# Preface {.unnumbered}
+
+Transcription of the WWII journals of Richard Pomeroy, three typewritten volumes (364 pages), and the reproducible R pipeline used to produce it.
+
+The source scans are kept as a local copy only. This book documents the pipeline and publishes the resulting transcription.
+
+Downloads of the transcription (DOCX, searchable PDF, and per-page CSV) are linked in [Assembly](08-assembly.qmd).

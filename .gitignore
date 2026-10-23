@@ -40,8 +40,17 @@ vignettes/*.pdf
 .Renviron
 .env
 
-# pkgdown site
-docs/
+# Source scans (local only) and page images
+data/raw_pdf/*
+!data/raw_pdf/.gitkeep
+data/pages/*
+!data/pages/.gitkeep
+*.pdf
+!output/*.pdf
+!docs/**/*.pdf
+
+# Quarto
+/.quarto/
 
 # translation temp files
 po/*~

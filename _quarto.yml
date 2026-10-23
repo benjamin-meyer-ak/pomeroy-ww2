@@ -1,0 +1,39 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "Pomeroy WWII Journals: An OCR Transcription Pipeline"
+  author: "Benjamin"
+  date: today
+  chapters:
+    - index.qmd
+    - 01-overview.qmd
+    - 02-setup.qmd
+    - 03-extraction.qmd
+    - 04-triage.qmd
+    - 05-ocr-local.qmd
+    - 06-ocr-llm-fallback.qmd
+    - 07-proofreading.qmd
+    - 08-assembly.qmd
+    - part: "Transcription"
+      chapters:
+        - 09-vol1.qmd
+        - 10-vol2.qmd
+        - 11-vol3.qmd
+    - references.qmd
+  repo-url: https://github.com/
+  downloads: [docx, pdf]
+
+format:
+  html:
+    theme: cosmo
+    code-fold: true
+    code-summary: "Show code"
+
+execute:
+  freeze: auto
+  echo: true
+  warning: false
+
+bibliography: references.bib

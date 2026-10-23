@@ -1,0 +1,3 @@
+# Quality Triage
+
+Automatic confidence scoring with manual overrides in `data/triage_overrides.csv`.

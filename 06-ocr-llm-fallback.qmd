@@ -1,0 +1,3 @@
+# Vision-Model Fallback
+
+Model comparison against hand-typed ground truth, cost, and caching.

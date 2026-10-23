@@ -1,0 +1,3 @@
+# Assembly and Downloads
+
+DOCX, searchable PDF, and per-page CSV.
