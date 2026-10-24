@@ -1,7 +1,9 @@
 # Preface {.unnumbered}
 
-Transcription of the WWII journals of Richard Pomeroy, three typewritten volumes (364 pages), and the reproducible R pipeline used to produce it.
+This document is a transcription of the WWII journals of Dr.Richard Pomeroy. It contains three typewritten volumes (364 pages), two from deployment 1943-1945 and one from a family trip to Europe in 1966.
 
-The source scans are kept as a local copy only. This book documents the pipeline and publishes the resulting transcription.
+The source scans are available as a download from Google Drive here:
 
-Downloads of the transcription (DOCX, searchable PDF, and per-page CSV) are linked in [Assembly](08-assembly.qmd).
+- [**Download Richard Pomeroy WWII (1943-1945) and Travel Journals (1966)**](https://drive.google.com/drive/folders/1LXxYWEZ1VdvQyyWVQiBhJ2fNneKuZ-n5?usp=sharing)
+
+This book documents the transcription code pipeline and publishes the resulting documents. Downloads of the transcription (DOCX, searchable PDF, and per-page CSV) are linked in the [Assembly](08-assembly.qmd) chapter.

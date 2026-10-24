@@ -1,0 +1,106 @@
+page_id,tier,reason,n_words,n_flagged,pct_flag,mean_conf
+vol2_p001,A_manual,front matter or two-column layout,399,337,0.8446115288220551,28.721808153883856
+vol2_p002,A_manual,front matter or two-column layout,385,323,0.8389610389610389,27.84898571658444
+vol2_p003,A_manual,front matter or two-column layout,54,42,0.7777777777777778,33.134602582013166
+vol1_p016,A_manual,high share of low-confidence or non-dictionary words,166,105,0.6325301204819277,55.97039484690471
+vol1_p025,A_manual,high share of low-confidence or non-dictionary words,380,203,0.5342105263157895,62.30437952342786
+vol1_p010,A_manual,high share of low-confidence or non-dictionary words,399,192,0.48120300751879697,66.01504594998849
+vol1_p021,A_manual,high share of low-confidence or non-dictionary words,323,140,0.43343653250773995,69.29119778565209
+vol1_p018,A_manual,high share of low-confidence or non-dictionary words,350,151,0.43142857142857144,71.31031278337751
+vol1_p011,A_manual,high share of low-confidence or non-dictionary words,294,123,0.41836734693877553,71.7172524458697
+vol1_p026,A_manual,high share of low-confidence or non-dictionary words,310,116,0.3741935483870968,73.37307393473964
+vol1_p022,A_manual,high share of low-confidence or non-dictionary words,414,150,0.36231884057971014,75.55360109449009
+vol1_p013,A_manual,high share of low-confidence or non-dictionary words,332,117,0.35240963855421686,75.83879201957978
+vol1_p027,A_manual,high share of low-confidence or non-dictionary words,385,135,0.35064935064935066,77.14915741759461
+vol2_p058,A_manual,high share of low-confidence or non-dictionary words,568,197,0.34683098591549294,75.89243606110693
+vol1_p023,A_manual,high share of low-confidence or non-dictionary words,387,134,0.3462532299741602,76.41116416793153
+vol1_p019,A_manual,high share of low-confidence or non-dictionary words,425,142,0.3341176470588235,77.47406809189741
+vol1_p024,A_manual,high share of low-confidence or non-dictionary words,419,139,0.3317422434367542,76.87167223654954
+vol1_p015,A_manual,high share of low-confidence or non-dictionary words,144,47,0.3263888888888889,74.14178880055745
+vol1_p014,A_manual,high share of low-confidence or non-dictionary words,422,136,0.3222748815165877,76.66049504393085
+vol2_p105,A_manual,high share of low-confidence or non-dictionary words,753,234,0.3107569721115538,76.21878211336782
+vol1_p017,A_manual,high share of low-confidence or non-dictionary words,438,132,0.3013698630136986,77.50441389214502
+vol1_p020,A_manual,high share of low-confidence or non-dictionary words,366,109,0.2978142076502732,78.38816341546064
+vol2_p093,A_manual,high share of low-confidence or non-dictionary words,442,130,0.29411764705882354,76.88560097465688
+vol1_p012,A_manual,high share of low-confidence or non-dictionary words,396,113,0.28535353535353536,80.83206235519563
+vol1_p009,A_manual,high share of low-confidence or non-dictionary words,372,106,0.2849462365591398,80.17375046719786
+vol1_p008,A_manual,high share of low-confidence or non-dictionary words,427,120,0.2810304449648712,80.51802213074731
+vol2_p116,A_manual,very few words (short or failed page),19,5,0.2631578947368421,87.9920425415039
+vol2_p097,A_manual,high share of low-confidence or non-dictionary words,621,159,0.2560386473429952,80.17466404741322
+vol2_p092,A_manual,high share of low-confidence or non-dictionary words,712,180,0.25280898876404495,80.89755194910457
+vol2_p101,A_manual,high share of low-confidence or non-dictionary words,523,132,0.25239005736137665,81.16635527164028
+vol2_p057,A_manual,high share of low-confidence or non-dictionary words,640,160,0.25,81.1601587176323
+vol3_p088,A_manual,front matter or two-column layout,450,104,0.2311111111111111,78.84820967780219
+vol2_p004,A_manual,front matter or two-column layout,141,21,0.14893617021276595,86.33172615538253
+vol2_p005,A_manual,front matter or two-column layout,207,26,0.12560386473429952,90.88191462714892
+vol2_p006,A_manual,front matter or two-column layout,232,24,0.10344827586206896,91.78625711901435
+vol3_p087,A_manual,front matter or two-column layout,585,55,0.09401709401709402,91.10944635114099
+vol2_p059,B_proofread,moderate share of flagged words,581,142,0.24440619621342513,81.16698106512966
+vol2_p088,B_proofread,moderate share of flagged words,699,156,0.22317596566523606,83.29635938827231
+vol2_p098,B_proofread,moderate share of flagged words,658,144,0.2188449848024316,82.71535762682512
+vol2_p090,B_proofread,moderate share of flagged words,421,85,0.20190023752969122,82.75537868690037
+vol2_p175,B_proofread,moderate share of flagged words,751,148,0.1970705725699068,86.6344777702809
+vol2_p100,B_proofread,moderate share of flagged words,639,125,0.19561815336463223,84.0862787452662
+vol2_p152,B_proofread,moderate share of flagged words,708,136,0.192090395480226,86.79386941187799
+vol2_p084,B_proofread,moderate share of flagged words,667,123,0.18440779610194902,84.25622497970375
+vol2_p099,B_proofread,moderate share of flagged words,657,120,0.182648401826484,85.15960169636858
+vol2_p094,B_proofread,moderate share of flagged words,712,129,0.18117977528089887,85.04390414377276
+vol2_p159,B_proofread,moderate share of flagged words,661,117,0.17700453857791226,87.3008642903615
+vol2_p177,B_proofread,moderate share of flagged words,712,124,0.17415730337078653,86.32840659109394
+vol2_p181,B_proofread,moderate share of flagged words,704,122,0.17329545454545456,86.69055621732365
+vol2_p176,B_proofread,moderate share of flagged words,588,101,0.1717687074829932,88.36795397518443
+vol2_p163,B_proofread,moderate share of flagged words,716,121,0.16899441340782123,87.64630897884263
+vol3_p085,B_proofread,moderate share of flagged words,737,123,0.16689280868385345,88.48443612832389
+vol2_p153,B_proofread,moderate share of flagged words,715,116,0.16223776223776223,88.16320550024926
+vol3_p086,B_proofread,moderate share of flagged words,695,112,0.16115107913669063,85.81908072601978
+vol2_p081,B_proofread,moderate share of flagged words,647,102,0.15765069551777433,87.44503759416583
+vol2_p178,B_proofread,moderate share of flagged words,641,99,0.1544461778471139,87.68624107848835
+vol2_p160,B_proofread,moderate share of flagged words,760,116,0.15263157894736842,88.02085584339342
+vol2_p171,B_proofread,moderate share of flagged words,719,109,0.15159944367176634,88.32191395129547
+vol2_p179,B_proofread,moderate share of flagged words,745,110,0.1476510067114094,87.95593322651499
+vol1_p057,B_proofread,moderate share of flagged words,353,52,0.14730878186968838,88.65488093432894
+vol2_p172,B_proofread,moderate share of flagged words,732,107,0.14617486338797814,88.4832090680065
+vol2_p103,B_proofread,moderate share of flagged words,666,97,0.14564564564564564,87.48443811433809
+vol2_p064,B_proofread,moderate share of flagged words,657,94,0.1430745814307458,87.10706529080232
+vol2_p183,B_proofread,moderate share of flagged words,751,106,0.1411451398135819,89.17050007846797
+vol2_p056,B_proofread,moderate share of flagged words,646,91,0.14086687306501547,86.28724108244243
+vol2_p008,B_proofread,moderate share of flagged words,709,99,0.13963328631875882,87.71560829280966
+vol2_p187,B_proofread,moderate share of flagged words,655,90,0.13740458015267176,88.08546857178666
+vol3_p081,B_proofread,moderate share of flagged words,379,52,0.13720316622691292,90.6223841543877
+vol1_p007,B_proofread,moderate share of flagged words,395,54,0.13670886075949368,90.18584636253647
+vol1_p056,B_proofread,moderate share of flagged words,352,48,0.13636363636363635,86.84358771280809
+vol1_p065,B_proofread,moderate share of flagged words,362,49,0.13535911602209943,85.46994015393336
+vol2_p182,B_proofread,moderate share of flagged words,725,98,0.13517241379310344,88.32592026283001
+vol2_p104,B_proofread,moderate share of flagged words,711,96,0.1350210970464135,87.19969754547677
+vol3_p022,B_proofread,moderate share of flagged words,163,22,0.13496932515337423,88.43237922528039
+vol2_p142,B_proofread,moderate share of flagged words,675,90,0.13333333333333333,88.17013528894495
+vol1_p033,B_proofread,moderate share of flagged words,423,55,0.13002364066193853,91.09009113717586
+vol2_p102,B_proofread,moderate share of flagged words,581,75,0.12908777969018934,88.14436343614904
+vol1_p045,B_proofread,moderate share of flagged words,360,46,0.12777777777777777,89.39613768259684
+vol2_p180,B_proofread,moderate share of flagged words,622,79,0.1270096463022508,89.80886100572789
+vol2_p173,B_proofread,moderate share of flagged words,776,98,0.12628865979381443,88.86749348689601
+vol2_p188,B_proofread,moderate share of flagged words,321,40,0.12461059190031153,89.15959092612579
+vol2_p087,B_proofread,moderate share of flagged words,665,82,0.12330827067669173,87.89940830890397
+vol1_p044,B_proofread,moderate share of flagged words,358,44,0.12290502793296089,90.48503885322442
+vol1_p054,B_proofread,moderate share of flagged words,350,43,0.12285714285714286,90.27302109854561
+vol2_p067,B_proofread,moderate share of flagged words,593,72,0.12141652613827993,88.4223652754425
+vol3_p084,B_proofread,moderate share of flagged words,767,93,0.121251629726206,89.47991499223174
+vol2_p161,B_proofread,moderate share of flagged words,756,90,0.11904761904761904,89.10438225256704
+vol2_p091,B_proofread,moderate share of flagged words,707,84,0.1188118811881188,88.5582158143989
+vol1_p058,B_proofread,moderate share of flagged words,359,42,0.116991643454039,89.20326436927391
+vol3_p030,B_proofread,moderate share of flagged words,276,32,0.11594202898550725,91.69144273840863
+vol1_p050,B_proofread,moderate share of flagged words,398,46,0.11557788944723618,90.09309760050557
+vol2_p068,B_proofread,moderate share of flagged words,451,52,0.11529933481152993,87.8808378316875
+vol2_p184,B_proofread,moderate share of flagged words,768,88,0.11458333333333333,88.67151013016701
+vol1_p046,B_proofread,moderate share of flagged words,352,40,0.11363636363636363,90.07624606652693
+vol1_p032,B_proofread,moderate share of flagged words,425,48,0.11294117647058824,91.73419175989487
+vol2_p186,B_proofread,moderate share of flagged words,742,82,0.1105121293800539,89.02341116213734
+vol1_p043,B_proofread,moderate share of flagged words,393,43,0.10941475826972011,92.06083339467911
+vol1_p052,B_proofread,moderate share of flagged words,353,38,0.10764872521246459,91.30325412480082
+vol2_p055,B_proofread,moderate share of flagged words,633,68,0.10742496050552923,89.4356912308583
+vol2_p078,B_proofread,moderate share of flagged words,635,68,0.10708661417322834,89.35290384968435
+vol2_p035,B_proofread,moderate share of flagged words,617,66,0.10696920583468396,90.6517292560596
+vol2_p096,B_proofread,moderate share of flagged words,411,43,0.10462287104622871,90.04243229775533
+vol2_p037,B_proofread,moderate share of flagged words,539,56,0.1038961038961039,90.43143012306906
+vol2_p051,B_proofread,moderate share of flagged words,532,54,0.10150375939849623,89.61673296304573
+vol1_p034,B_proofread,moderate share of flagged words,335,34,0.10149253731343283,91.9210139601978

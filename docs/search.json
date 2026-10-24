@@ -1,0 +1,175 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Pomeroy WWII Journals: An OCR Transcription Pipeline",
+    "section": "",
+    "text": "Preface\nTranscription of the WWII journals of Richard Pomeroy, three typewritten volumes (364 pages), and the reproducible R pipeline used to produce it.\nThe source scans are available as a download from Google Drive here:\n\nDownload R Pomeroy WWII Journals\n\nThis book documents the analysis pipeline and publishes the resulting transcription. Downloads of the transcription (DOCX, searchable PDF, and per-page CSV) are linked in the Assembly chapter.",
+    "crumbs": [
+      "Preface"
+    ]
+  },
+  {
+    "objectID": "01-overview.html",
+    "href": "01-overview.html",
+    "title": "1  Overview",
+    "section": "",
+    "text": "1.1 Goals",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Overview</span>"
+    ]
+  },
+  {
+    "objectID": "01-overview.html#source-material",
+    "href": "01-overview.html#source-material",
+    "title": "1  Overview",
+    "section": "1.2 Source material",
+    "text": "1.2 Source material\nThree typewritten PDFs: volume 1 (174 pages), volume 2 (102 pages), volume 3 (88 pages).",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Overview</span>"
+    ]
+  },
+  {
+    "objectID": "01-overview.html#pipeline-at-a-glance",
+    "href": "01-overview.html#pipeline-at-a-glance",
+    "title": "1  Overview",
+    "section": "1.3 Pipeline at a glance",
+    "text": "1.3 Pipeline at a glance",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Overview</span>"
+    ]
+  },
+  {
+    "objectID": "01-overview.html#rights-and-ethics",
+    "href": "01-overview.html#rights-and-ethics",
+    "title": "1  Overview",
+    "section": "1.4 Rights and ethics",
+    "text": "1.4 Rights and ethics",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Overview</span>"
+    ]
+  },
+  {
+    "objectID": "02-setup.html",
+    "href": "02-setup.html",
+    "title": "2  Setup",
+    "section": "",
+    "text": "2.1 Packages and renv",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Setup</span>"
+    ]
+  },
+  {
+    "objectID": "02-setup.html#tesseract",
+    "href": "02-setup.html#tesseract",
+    "title": "2  Setup",
+    "section": "2.2 Tesseract",
+    "text": "2.2 Tesseract",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Setup</span>"
+    ]
+  },
+  {
+    "objectID": "02-setup.html#api-keys",
+    "href": "02-setup.html#api-keys",
+    "title": "2  Setup",
+    "section": "2.3 API keys",
+    "text": "2.3 API keys",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Setup</span>"
+    ]
+  },
+  {
+    "objectID": "03-extraction.html",
+    "href": "03-extraction.html",
+    "title": "3  Page Extraction",
+    "section": "",
+    "text": "Convert each PDF to zero-padded 300 DPI PNGs (vol1_p001.png).",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Page Extraction</span>"
+    ]
+  },
+  {
+    "objectID": "04-triage.html",
+    "href": "04-triage.html",
+    "title": "4  Quality Triage",
+    "section": "",
+    "text": "Automatic confidence scoring with manual overrides in data/triage_overrides.csv.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Quality Triage</span>"
+    ]
+  },
+  {
+    "objectID": "05-ocr-local.html",
+    "href": "05-ocr-local.html",
+    "title": "5  Local OCR",
+    "section": "",
+    "text": "Tesseract with magick preprocessing for faded pages.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Local OCR</span>"
+    ]
+  },
+  {
+    "objectID": "06-ocr-llm-fallback.html",
+    "href": "06-ocr-llm-fallback.html",
+    "title": "6  Vision-Model Fallback",
+    "section": "",
+    "text": "Model comparison against hand-typed ground truth, cost, and caching.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Vision-Model Fallback</span>"
+    ]
+  },
+  {
+    "objectID": "07-proofreading.html",
+    "href": "07-proofreading.html",
+    "title": "7  Proofreading",
+    "section": "",
+    "text": "Low-confidence flags, custom dictionary, and side-by-side review.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Proofreading</span>"
+    ]
+  },
+  {
+    "objectID": "08-assembly.html",
+    "href": "08-assembly.html",
+    "title": "8  Assembly and Downloads",
+    "section": "",
+    "text": "DOCX, searchable PDF, and per-page CSV.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Assembly and Downloads</span>"
+    ]
+  },
+  {
+    "objectID": "09-vol1.html",
+    "href": "09-vol1.html",
+    "title": "9  WWII Journal, Volume 1",
+    "section": "",
+    "text": "Transcription pending. Source file: vol1.pdf.",
+    "crumbs": [
+      "WWII Journals",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>WWII Journal, Volume 1</span>"
+    ]
+  },
+  {
+    "objectID": "10-vol3.html",
+    "href": "10-vol3.html",
+    "title": "10  WWII Journal, Volume 3",
+    "section": "",
+    "text": "Transcription pending. Source file: vol3.pdf. Volume numbering is unconfirmed.",
+    "crumbs": [
+      "WWII Journals",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>WWII Journal, Volume 3</span>"
+    ]
+  },
+  {
+    "objectID": "11-europe-1966.html",
+    "href": "11-europe-1966.html",
+    "title": "11  Europe Journal, 1966",
+    "section": "",
+    "text": "Transcription pending. Source file: vol2.pdf. This is a separate document from the WWII journals and is processed in its own run.",
+    "crumbs": [
+      "Europe Journal, 1966",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Europe Journal, 1966</span>"
+    ]
+  }
+]

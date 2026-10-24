@@ -4,7 +4,8 @@ project:
 
 book:
   title: "Pomeroy WWII Journals: An OCR Transcription Pipeline"
-  author: "Benjamin"
+  author: "Benjamin Meyer"
+  email: "benjamin.meyer.ak@gmail.com"
   date: today
   chapters:
     - index.qmd
@@ -16,11 +17,13 @@ book:
     - 06-ocr-llm-fallback.qmd
     - 07-proofreading.qmd
     - 08-assembly.qmd
-    - part: "Transcription"
+    - part: "WWII Journals"
       chapters:
         - 09-vol1.qmd
-        - 10-vol2.qmd
-        - 11-vol3.qmd
+        - 10-vol3.qmd
+    - part: "Europe Journal, 1966"
+      chapters:
+        - 11-europe-1966.qmd
     - references.qmd
   repo-url: https://github.com/
   downloads: [docx, pdf]
