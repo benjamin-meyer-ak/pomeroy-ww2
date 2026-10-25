@@ -1,3 +1,76 @@
 # Proofreading
 
-Low-confidence flags, custom dictionary, and side-by-side review.
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(knitr)
+source("R/proofread.R")
+```
+
+The proofreading step turns OCR drafts into checked text. It is a small Shiny app that shows the page scan beside an editable text box.
+
+## Using the app
+
+From the project root:
+
+```r
+source("R/proofread.R")
+run_proofread()
+```
+
+- **Left:** the page image, either with flagged words boxed in red (half size) or the clean full-resolution crop. A slider zooms.
+- **Right:** the text, starting from the OCR draft. A `[?word]` mark means the OCR was unsure of that word. Retype it without the mark.
+- **Sidebar:** filters for tier (tiers A and B by default), volume and status (all, to do, done), plus the page list with Previous and Next.
+- **Saving:** Save, or Save and next. Edits are also saved automatically when you change page. A badge above the box shows unsaved changes, and the browser warns before the tab is closed with unsaved edits. A page you only view is not recorded.
+
+A page saved unchanged is recorded as `confirmed`, so a page checked and found correct counts as done.
+
+## The corrections file
+
+Every save writes one row to `data/corrections.csv`. The file is committed, so the full history of human changes lives in version control.
+
+| Column | Meaning |
+|---|---|
+| `page_id` | For example `vol1_p016`. One row per page; the latest save wins |
+| `status` | `edited` (text differs from the OCR draft) or `confirmed` (checked, unchanged) |
+| `corrected_text` | The full page text as saved, including any `[?word]` marks left unresolved |
+| `saved_at` | Timestamp |
+
+The file is written to a temporary name and then renamed, so a crash cannot leave a half-written file.
+
+## Merging corrections
+
+`apply_corrections()` joins the corrections to the page table. A corrected page replaces the OCR draft; every other page keeps it. The result has `final_text` and a `source` column (`edited`, `confirmed` or `ocr_draft`), so any page can be traced to where its text came from. Marks left in the text stay visible, so unresolved words are never hidden.
+
+Corrections work at page level. If a page is later re-OCR'd with better settings, its old correction still takes priority.
+
+## Progress
+
+```{r}
+#| label: tbl-progress
+#| tbl-cap: "Review progress by tier, as of the last time this chapter was rendered."
+final <- apply_corrections()
+final |>
+  count(tier, source) |>
+  pivot_wider(names_from = source, values_from = n, values_fill = 0) |>
+  kable()
+```
+
+## Code
+
+```{r}
+#| file: R/proofread.R
+#| eval: false
+```
+
+The app itself:
+
+```{r}
+#| file: proofread/app.R
+#| eval: false
+```
+
+## Not yet done
+
+A custom dictionary of names and places would reduce false flags. A fix recorded for one word is not yet applied to the same word elsewhere; each page is corrected on its own.

@@ -141,7 +141,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02-setup.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setup</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setup and Reproducing the Work</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -231,8 +231,15 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#planned-outputs" id="toc-planned-outputs" class="nav-link active" data-scroll-target="#planned-outputs"><span class="header-section-number">8.1</span> Planned outputs</a></li>
+  <li><a href="#open-decisions" id="toc-open-decisions" class="nav-link" data-scroll-target="#open-decisions"><span class="header-section-number">8.2</span> Open decisions</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -256,9 +263,65 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>DOCX, searchable PDF, and per-page CSV.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The downloadable files described here have not been built yet. This chapter records the plan so the step is not forgotten.</p>
+</div>
+</div>
+<p>Assembly combines the final text for every page into the files readers will use. All of them come from one table, the output of <code>apply_corrections()</code> (see <a href="./07-proofreading.html">Proofreading</a>).</p>
+<section id="planned-outputs" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="planned-outputs"><span class="header-section-number">8.1</span> Planned outputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Output</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Per-page CSV</td>
+<td>Volume, page, final text, tier, source (<code>edited</code>, <code>confirmed</code>, <code>ocr_draft</code>), mean confidence</td>
+</tr>
+<tr class="even">
+<td>DOCX</td>
+<td>One file per document with a title page, page markers and readable body style</td>
+</tr>
+<tr class="odd">
+<td>Searchable PDF</td>
+<td>Not decided: the original scans with an invisible text layer, a typeset transcription, or both</td>
+</tr>
+<tr class="even">
+<td>Book chapters</td>
+<td>One per volume, generated from the same table</td>
+</tr>
+</tbody>
+</table>
+<p>Each document is built in its own run. The 1966 Europe journal gets its own DOCX, PDF and CSV, separate from the two WWII volumes.</p>
+</section>
+<section id="open-decisions" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="open-decisions"><span class="header-section-number">8.2</span> Open decisions</h2>
+<ul>
+<li>Which searchable PDF to offer. A text layer over the original scans preserves the look of the typescript but is large; a typeset version is small and easy to read.</li>
+<li>PDF engine for the book (LaTeX or Typst).</li>
+<li>Whether pages still marked as unreviewed OCR drafts should be published, or held back until checked. The <code>source</code> column makes either choice easy to apply.</li>
+</ul>
+<p>Download links will be added to the preface and to this chapter once the files exist.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -141,7 +141,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02-setup.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setup</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setup and Reproducing the Work</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -231,8 +231,16 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#intended-design" id="toc-intended-design" class="nav-link active" data-scroll-target="#intended-design"><span class="header-section-number">6.1</span> Intended design</a></li>
+  <li><a href="#comparison-before-committing" id="toc-comparison-before-committing" class="nav-link" data-scroll-target="#comparison-before-committing"><span class="header-section-number">6.2</span> Comparison before committing</a></li>
+  <li><a href="#questions-the-owner-may-want-to-weigh" id="toc-questions-the-owner-may-want-to-weigh" class="nav-link" data-scroll-target="#questions-the-owner-may-want-to-weigh"><span class="header-section-number">6.3</span> Questions the owner may want to weigh</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -256,9 +264,40 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Model comparison against hand-typed ground truth, cost, and caching.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This step is planned and has not been built. Nothing in this chapter has been run.</p>
+</div>
+</div>
+<p>Tesseract struggles with some pages: front matter with dotted leaders, dark two-column newsletter pages, and the worn-ribbon section of volume 1. A vision language model, which reads the image directly, may do better on those. The plan is to try it only on the tier A pages, not the whole set.</p>
+<section id="intended-design" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="intended-design"><span class="header-section-number">6.1</span> Intended design</h2>
+<ul>
+<li><strong>Scope.</strong> Tier A pages, starting with the 1966 front matter (table of contents, itinerary, mail schedule), the two <code>vol3</code> newsletter pages and the faded <code>vol1</code> pages.</li>
+<li><strong>Interface.</strong> The <code>ellmer</code> package, so the provider can be swapped.</li>
+<li><strong>Output.</strong> Plain text for ordinary pages and Markdown tables for the schedules, saved next to the tesseract result with the engine recorded.</li>
+<li><strong>Caching.</strong> Every response is stored per page, so reruns never pay twice.</li>
+<li><strong>Review.</strong> Model output goes through the same proofreading app. A model transcription is a better starting draft, not a final text.</li>
+</ul>
+</section>
+<section id="comparison-before-committing" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="comparison-before-committing"><span class="header-section-number">6.2</span> Comparison before committing</h2>
+<p>Models differ in accuracy and cost. Before using one at scale, two or three providers should transcribe the same ten hand-typed pages. The comparison reports character error rate and cost per page, and the cheaper model wins unless it is clearly less accurate. The model identifiers will be chosen at that point, because the available versions change quickly.</p>
+</section>
+<section id="questions-the-owner-may-want-to-weigh" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="questions-the-owner-may-want-to-weigh"><span class="header-section-number">6.3</span> Questions the owner may want to weigh</h2>
+<p>Sending page images to an outside service shares the journal text with that provider. The owner has cleared the material for publication, but should confirm that is acceptable for the chosen provider’s terms.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

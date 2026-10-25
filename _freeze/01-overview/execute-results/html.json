@@ -1,0 +1,17 @@
+{
+  "hash": "bceb3e9b00f5cd39385ce54c3882bbdf",
+  "result": {
+    "engine": "knitr",
+    "markdown": "# Overview\n\n\n\n\n\n\n\n\n\n## Goals\n\nThe aim is a readable, searchable transcription of Dr. Richard Pomeroy's typewritten journals, produced by a pipeline that anyone can rerun and inspect. Three principles guide the work:\n\n- **Automate what can be automated.** Optical character recognition (OCR) handles the bulk of the text. People are asked to type or check only the pages the software handles poorly.\n- **Stay near-verbatim.** The text is not modernised or silently corrected. Where the OCR is unsure of a word, the word is flagged. Every human fix is recorded in a single file, `data/corrections.csv`, so each change can be traced.\n- **Keep the record reproducible.** One command, `targets::tar_make()`, rebuilds everything from the scans, and every script is shown in full in this book. Package versions are pinned and the settings that differ between volumes live in one file. See [Setup](02-setup.qmd) for the steps. Rendering the book never reruns OCR.\n\n## Source material\n\nThree typewritten PDFs were scanned from bound or loose pages. None has an embedded text layer, so every page needs OCR.\n\n\n\n\n::: {#tbl-sources .cell tbl-cap='Source files, as recorded in data/volume_config.csv.'}\n\n```{.r .cell-code}\nread_csv(\"data/volume_config.csv\", show_col_types = FALSE) |>\n  select(file, document, pages = n_pages, layout, text_side) |>\n  kable()\n```\n\n::: {.cell-output-display}\n\n\n|file     |document   | pages|layout |text_side |\n|:--------|:----------|-----:|:------|:---------|\n|vol1.pdf |wwii       |   102|spread |right     |\n|vol3.pdf |wwii       |    88|spread |right     |\n|vol2.pdf |europe1966 |   188|page   |full      |\n\n\n:::\n:::\n\n\n\n\nThe two WWII files (`vol1.pdf`, `vol3.pdf`) are scanned as two-page spreads in which only the right-hand page carries text. The 1966 Europe journal (`vol2.pdf`) is a separate document of single portrait pages and is processed in its own run. The WWII volume numbering is not yet confirmed, so the book refers to the files by name.\n\nThe preface quotes 364 pages, while the PDFs contain 378 (102 + 188 + 88). The difference has not been reconciled. Front matter in the 1966 journal and duplicated pages in the scans are likely contributors.\n\n## Pipeline at a glance\n\n\n\n\n```{mermaid}\nflowchart LR\n  A[PDF scans] --> B[Inventory and cropping]\n  B --> C[300 DPI page images]\n  C --> D[Tesseract OCR]\n  D --> E[Triage into tiers A, B, C]\n  E --> F[Proofreading app]\n  F --> G[corrections.csv]\n  G --> H[Final text, DOCX, PDF, CSV]\n  E -.-> I[Vision model for front matter and two-column pages, planned]\n  I -.-> F\n```\n\n\n\n\nEach step is described in its own chapter. Chapters on steps that exist (extraction, triage, local OCR, proofreading) show the real code and measured results. Chapters on steps that are not yet built (vision-model fallback, assembly) say so plainly.\n\n## Rights and ethics\n\nThe journals are family papers. The owner has agreed to their public release, including the names they contain. The scans themselves are not stored in this repository; they are shared through the download link in the preface.\n",
+    "supporting": [
+      "01-overview_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

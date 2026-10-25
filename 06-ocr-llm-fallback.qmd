@@ -1,3 +1,23 @@
 # Vision-Model Fallback
 
-Model comparison against hand-typed ground truth, cost, and caching.
+::: {.callout-note}
+This step is planned and has not been built. Nothing in this chapter has been run.
+:::
+
+Tesseract struggles with some pages: front matter with dotted leaders, dark two-column newsletter pages, and the worn-ribbon section of volume 1. A vision language model, which reads the image directly, may do better on those. The plan is to try it only on the tier A pages, not the whole set.
+
+## Intended design
+
+- **Scope.** Tier A pages, starting with the 1966 front matter (table of contents, itinerary, mail schedule), the two `vol3` newsletter pages and the faded `vol1` pages.
+- **Interface.** The `ellmer` package, so the provider can be swapped.
+- **Output.** Plain text for ordinary pages and Markdown tables for the schedules, saved next to the tesseract result with the engine recorded.
+- **Caching.** Every response is stored per page, so reruns never pay twice.
+- **Review.** Model output goes through the same proofreading app. A model transcription is a better starting draft, not a final text.
+
+## Comparison before committing
+
+Models differ in accuracy and cost. Before using one at scale, two or three providers should transcribe the same ten hand-typed pages. The comparison reports character error rate and cost per page, and the cheaper model wins unless it is clearly less accurate. The model identifiers will be chosen at that point, because the available versions change quickly.
+
+## Questions the owner may want to weigh
+
+Sending page images to an outside service shares the journal text with that provider. The owner has cleared the material for publication, but should confirm that is acceptable for the chosen provider's terms.

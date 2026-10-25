@@ -5,7 +5,6 @@ project:
 book:
   title: "Pomeroy WWII Journals: An OCR Transcription Pipeline"
   author: "Benjamin Meyer"
-  email: "benjamin.meyer.ak@gmail.com"
   date: today
   chapters:
     - index.qmd

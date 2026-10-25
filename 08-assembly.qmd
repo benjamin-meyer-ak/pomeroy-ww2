@@ -1,3 +1,26 @@
 # Assembly and Downloads
 
-DOCX, searchable PDF, and per-page CSV.
+::: {.callout-note}
+The downloadable files described here have not been built yet. This chapter records the plan so the step is not forgotten.
+:::
+
+Assembly combines the final text for every page into the files readers will use. All of them come from one table, the output of `apply_corrections()` (see [Proofreading](07-proofreading.qmd)).
+
+## Planned outputs
+
+| Output | Contents |
+|---|---|
+| Per-page CSV | Volume, page, final text, tier, source (`edited`, `confirmed`, `ocr_draft`), mean confidence |
+| DOCX | One file per document with a title page, page markers and readable body style |
+| Searchable PDF | Not decided: the original scans with an invisible text layer, a typeset transcription, or both |
+| Book chapters | One per volume, generated from the same table |
+
+Each document is built in its own run. The 1966 Europe journal gets its own DOCX, PDF and CSV, separate from the two WWII volumes.
+
+## Open decisions
+
+- Which searchable PDF to offer. A text layer over the original scans preserves the look of the typescript but is large; a typeset version is small and easy to read.
+- PDF engine for the book (LaTeX or Typst).
+- Whether pages still marked as unreviewed OCR drafts should be published, or held back until checked. The `source` column makes either choice easy to apply.
+
+Download links will be added to the preface and to this chapter once the files exist.

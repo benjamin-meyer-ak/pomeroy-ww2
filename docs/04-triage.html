@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -141,7 +175,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02-setup.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setup</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setup and Reproducing the Work</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -231,8 +265,17 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#flagging-words" id="toc-flagging-words" class="nav-link active" data-scroll-target="#flagging-words"><span class="header-section-number">4.1</span> Flagging words</a></li>
+  <li><a href="#tiers" id="toc-tiers" class="nav-link" data-scroll-target="#tiers"><span class="header-section-number">4.2</span> Tiers</a></li>
+  <li><a href="#limits" id="toc-limits" class="nav-link" data-scroll-target="#limits"><span class="header-section-number">4.3</span> Limits</a></li>
+  <li><a href="#code" id="toc-code" class="nav-link" data-scroll-target="#code"><span class="header-section-number">4.4</span> Code</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -256,9 +299,247 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Automatic confidence scoring with manual overrides in <code>data/triage_overrides.csv</code>.</p>
+<p>Not every page needs the same attention. After OCR, each page is scored and placed in one of three tiers, so effort goes where it is needed.</p>
+<section id="flagging-words" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="flagging-words"><span class="header-section-number">4.1</span> Flagging words</h2>
+<p>Tesseract reports a confidence for every word. A word is flagged for review if either of these holds:</p>
+<ul>
+<li>its confidence is below 60, or</li>
+<li>it is not in the <code>spelling</code> package’s English dictionary.</li>
+</ul>
+<p>Names and places are not in the dictionary, so they are flagged too. That adds noise but is harmless: a flag only asks a person to look. The opposite error is not caught. A real word that OCR misreads as a different real word, with high confidence, is not flagged.</p>
+</section>
+<section id="tiers" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="tiers"><span class="header-section-number">4.2</span> Tiers</h2>
+<p>A page’s tier depends on the share of its words that are flagged.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tier</th>
+<th>Rule</th>
+<th>Treatment</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A, manual</td>
+<td>25% or more of words flagged, fewer than 40 words, or forced</td>
+<td>Type from the scan</td>
+</tr>
+<tr class="even">
+<td>B, proofread</td>
+<td>10% to 25% flagged</td>
+<td>Fix flagged words</td>
+</tr>
+<tr class="odd">
+<td>C, spot check</td>
+<td>Under 10% flagged</td>
+<td>Spot check only</td>
+</tr>
+</tbody>
+</table>
+<p>“Forced” pages are listed in the <code>force_manual_pages</code> column of <code>data/volume_config.csv</code>: the 1966 front matter (pages 1 to 6) and the two-column newsletter pages in <code>vol3</code> (87 and 88), where tesseract’s output is known to be unreliable regardless of its confidence.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pages <span class="sc">|&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(volume, tier) <span class="sc">|&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> tier, <span class="at">values_from =</span> n, <span class="at">values_fill =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-tiers" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-tiers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4.1: Pages per tier and volume.
+</figcaption>
+<div aria-describedby="tbl-tiers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">volume</th>
+<th style="text-align: right;">A_manual</th>
+<th style="text-align: right;">B_proofread</th>
+<th style="text-align: right;">C_spot_check</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">vol1</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">67</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">vol2</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">126</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">vol3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">80</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pages, <span class="fu">aes</span>(mean_conf)) <span class="sc">+</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(volume), <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Mean word confidence (%)"</span>, <span class="at">y =</span> <span class="st">"Pages"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-confidence" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-confidence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="04-triage_files/figure-html/fig-confidence-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-confidence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.1: Mean word confidence per page. Pages left of the main mass are the ones triage sends to people.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The median page scores 92% to 94% mean confidence, with 5% to 8% of words flagged. Most tier A pages in <code>vol1</code> fall in pages 10 to 27, a section typed with a worn ribbon whose letters are broken but still legible to a person.</p>
+</section>
+<section id="limits" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="limits"><span class="header-section-number">4.3</span> Limits</h2>
+<p>The cutoffs above have not been tuned. Tuning needs hand-typed reference pages, which do not exist yet (see <a href="./05-ocr-local.html">Local OCR</a>). Treat the tiers as a sensible first sort, not a measured quality grade. A file of manual overrides, <code>data/triage_overrides.csv</code>, is planned so a person can move a page between tiers; it has not been created.</p>
+</section>
+<section id="code" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="code"><span class="header-section-number">4.4</span> Code</h2>
+<p>The tiering, draft text and review images are produced by one script. It reads the cached OCR results, marks flagged words as <code>[?word]</code> in the draft text, and draws red boxes on the page images of tiers A and B for the proofreading app.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate cached OCR into triage tiers, draft text, review images and the</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># manual queue. Reads data/interim/ocr/*.rds (see R/ocr_pipeline.R) and the</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># per-volume settings in data/volume_config.csv. Returns every file it writes.</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magick)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/utils.R"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>low_conf_cut <span class="ot">&lt;-</span> <span class="dv">60</span>   <span class="co"># tesseract word confidence below this is flagged</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Pages the config forces into tier A (front matter, two-column layouts)</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>forced_pages <span class="ot">&lt;-</span> <span class="cf">function</span>(config) {</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  config <span class="sc">|&gt;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(force_manual_pages)) <span class="sc">|&gt;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">page =</span> <span class="fu">map</span>(force_manual_pages, parse_pages)) <span class="sc">|&gt;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unnest</span>(page) <span class="sc">|&gt;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">transmute</span>(<span class="at">page_id =</span> <span class="fu">sprintf</span>(<span class="st">"%s_p%03d"</span>, volume_id, page)) <span class="sc">|&gt;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(page_id)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Rebuild lines from word boxes so flagged words can be marked inline</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>mark_text <span class="ot">&lt;-</span> <span class="cf">function</span>(w) {</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  w <span class="ot">&lt;-</span> w <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">ymid =</span> (y0 <span class="sc">+</span> y1) <span class="sc">/</span> <span class="dv">2</span>, <span class="at">h =</span> y1 <span class="sc">-</span> y0)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  lh <span class="ot">&lt;-</span> <span class="fu">median</span>(w<span class="sc">$</span>h)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  w <span class="sc">|&gt;</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(ymid, x0) <span class="sc">|&gt;</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">line =</span> <span class="fu">cumsum</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="fu">diff</span>(ymid) <span class="sc">&gt;</span> <span class="fl">0.6</span> <span class="sc">*</span> lh))) <span class="sc">|&gt;</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(line, x0) <span class="sc">|&gt;</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">out =</span> <span class="fu">if_else</span>(flagged, <span class="fu">paste0</span>(<span class="st">"[?"</span>, word, <span class="st">"]"</span>), word)) <span class="sc">|&gt;</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">.by =</span> line, <span class="at">txt =</span> <span class="fu">paste</span>(out, <span class="at">collapse =</span> <span class="st">" "</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(txt) <span class="sc">|&gt;</span> <span class="fu">paste</span>(<span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>build_outputs <span class="ot">&lt;-</span> <span class="cf">function</span>(config, <span class="at">ocr_files =</span> <span class="fu">list.files</span>(<span class="st">"data/interim/ocr"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>  forced_manual <span class="ot">&lt;-</span> <span class="fu">forced_pages</span>(config)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">map</span>(ocr_files, readRDS) <span class="sc">|&gt;</span> <span class="fu">set_names</span>(tools<span class="sc">::</span><span class="fu">file_path_sans_ext</span>(<span class="fu">basename</span>(ocr_files)))</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  words <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(res, <span class="st">"words"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">token =</span> <span class="fu">str_replace_all</span>(word, <span class="st">"^[^A-Za-z']+|[^A-Za-z']+$"</span>, <span class="st">""</span>),</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>           <span class="at">is_word =</span> <span class="fu">nchar</span>(token) <span class="sc">&gt;=</span> <span class="dv">2</span>)</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  bad <span class="ot">&lt;-</span> spelling<span class="sc">::</span><span class="fu">spell_check_text</span>(<span class="fu">paste</span>(<span class="fu">unique</span>(words<span class="sc">$</span>token[words<span class="sc">$</span>is_word]), <span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))<span class="sc">$</span>word</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  words <span class="ot">&lt;-</span> words <span class="sc">|&gt;</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">low_conf =</span> confidence <span class="sc">&lt;</span> low_conf_cut,</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>           <span class="at">misspelled =</span> is_word <span class="sc">&amp;</span> token <span class="sc">%in%</span> bad,</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>           <span class="at">flagged =</span> low_conf <span class="sc">|</span> misspelled)</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  pages <span class="ot">&lt;-</span> words <span class="sc">|&gt;</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">.by =</span> page_id, <span class="at">n_words =</span> <span class="fu">n</span>(), <span class="at">mean_conf =</span> <span class="fu">mean</span>(confidence),</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>              <span class="at">pct_low =</span> <span class="fu">mean</span>(low_conf), <span class="at">pct_flag =</span> <span class="fu">mean</span>(flagged)) <span class="sc">|&gt;</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">volume =</span> <span class="fu">str_sub</span>(page_id, <span class="dv">1</span>, <span class="dv">4</span>), <span class="at">page =</span> <span class="fu">as.integer</span>(<span class="fu">str_sub</span>(page_id, <span class="dv">7</span>)),</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>           <span class="at">tier =</span> <span class="fu">case_when</span>(page_id <span class="sc">%in%</span> forced_manual <span class="sc">~</span> <span class="st">"A_manual"</span>,</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>                            pct_flag <span class="sc">&gt;=</span> <span class="fl">0.25</span> <span class="sc">|</span> n_words <span class="sc">&lt;</span> <span class="dv">40</span> <span class="sc">~</span> <span class="st">"A_manual"</span>,</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>                            pct_flag <span class="sc">&gt;=</span> <span class="fl">0.10</span> <span class="sc">~</span> <span class="st">"B_proofread"</span>,</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>                            <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"C_spot_check"</span>),</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>           <span class="at">reason =</span> <span class="fu">case_when</span>(page_id <span class="sc">%in%</span> forced_manual <span class="sc">~</span> <span class="st">"front matter or two-column layout"</span>,</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>                              n_words <span class="sc">&lt;</span> <span class="dv">40</span> <span class="sc">~</span> <span class="st">"very few words (short or failed page)"</span>,</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>                              pct_flag <span class="sc">&gt;=</span> <span class="fl">0.25</span> <span class="sc">~</span> <span class="st">"high share of low-confidence or non-dictionary words"</span>,</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>                              pct_flag <span class="sc">&gt;=</span> <span class="fl">0.10</span> <span class="sc">~</span> <span class="st">"moderate share of flagged words"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(volume, page)</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>  drafts <span class="ot">&lt;-</span> words <span class="sc">|&gt;</span> <span class="fu">group_split</span>(page_id) <span class="sc">|&gt;</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_names</span>(<span class="fu">map_chr</span>(<span class="fu">group_split</span>(words, page_id), \(d) d<span class="sc">$</span>page_id[<span class="dv">1</span>])) <span class="sc">|&gt;</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    <span class="fu">map_chr</span>(mark_text)</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>  pages <span class="ot">&lt;-</span> pages <span class="sc">|&gt;</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">text =</span> <span class="fu">map_chr</span>(page_id, \(id) <span class="fu">str_trim</span>(res[[id]]<span class="sc">$</span>text)),</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>           <span class="at">text_marked =</span> drafts[page_id])</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(<span class="st">"output"</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="fu">select</span>(pages, page_id, volume, page, tier, reason, n_words, mean_conf, pct_low, pct_flag, text, text_marked),</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>            <span class="st">"output/pages.csv"</span>)</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="fu">select</span>(words, page_id, word, confidence, x0, y0, x1, y1, low_conf, misspelled, flagged),</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>            <span class="st">"output/ocr_words.csv"</span>)</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Draft text per volume: tier A pages carry a banner, flagged words are [?word]</span></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>  draft_files <span class="ot">&lt;-</span> <span class="fu">map_chr</span>(<span class="fu">unique</span>(pages<span class="sc">$</span>volume), \(v) {</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>    pg <span class="ot">&lt;-</span> <span class="fu">filter</span>(pages, volume <span class="sc">==</span> v)</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    txt <span class="ot">&lt;-</span> <span class="fu">pmap_chr</span>(pg, \(page, tier, text_marked, ...) {</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>      banner <span class="ot">&lt;-</span> <span class="cf">if</span> (tier <span class="sc">==</span> <span class="st">"A_manual"</span>) <span class="st">"</span><span class="sc">\n</span><span class="st">*** MANUAL TRANSCRIPTION NEEDED: OCR unreliable ***"</span> <span class="cf">else</span> <span class="st">""</span></span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sprintf</span>(<span class="st">"[p. %d]%s</span><span class="sc">\n</span><span class="st">%s</span><span class="sc">\n</span><span class="st">"</span>, page, banner, text_marked)</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>    path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"output"</span>, <span class="fu">paste0</span>(v, <span class="st">"_draft.txt"</span>))</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>    <span class="fu">writeLines</span>(txt, path)</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>    path</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Review images: red boxes on flagged words, for tier A and B pages</span></span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(<span class="st">"data/pages/review"</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>  review_files <span class="ot">&lt;-</span> pages <span class="sc">|&gt;</span> <span class="fu">filter</span>(tier <span class="sc">!=</span> <span class="st">"C_spot_check"</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(page_id) <span class="sc">|&gt;</span> <span class="fu">map_chr</span>(\(id) {</span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>    w <span class="ot">&lt;-</span> <span class="fu">filter</span>(words, page_id <span class="sc">==</span> id, flagged)</span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>    img <span class="ot">&lt;-</span> <span class="fu">image_read</span>(<span class="fu">file.path</span>(<span class="st">"data/pages"</span>, <span class="fu">paste0</span>(id, <span class="st">".png"</span>)))</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>    img <span class="ot">&lt;-</span> <span class="fu">image_draw</span>(img)</span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rect</span>(w<span class="sc">$</span>x0 <span class="sc">-</span> <span class="dv">2</span>, w<span class="sc">$</span>y0 <span class="sc">-</span> <span class="dv">2</span>, w<span class="sc">$</span>x1 <span class="sc">+</span> <span class="dv">2</span>, w<span class="sc">$</span>y1 <span class="sc">+</span> <span class="dv">2</span>, <span class="at">border =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>    <span class="fu">dev.off</span>()</span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>    path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"data/pages/review"</span>, <span class="fu">paste0</span>(id, <span class="st">".png"</span>))</span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>    <span class="fu">image_write</span>(<span class="fu">image_resize</span>(img, <span class="st">"50%"</span>), path, <span class="at">format =</span> <span class="st">"png"</span>)</span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>    path</span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Manual queue: pages ranked by how much work they need</span></span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>  queue <span class="ot">&lt;-</span> pages <span class="sc">|&gt;</span></span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(tier <span class="sc">!=</span> <span class="st">"C_spot_check"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">n_flagged =</span> <span class="fu">round</span>(pct_flag <span class="sc">*</span> n_words)) <span class="sc">|&gt;</span></span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(tier, <span class="fu">desc</span>(pct_flag)) <span class="sc">|&gt;</span></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(page_id, tier, reason, n_words, n_flagged, pct_flag, mean_conf)</span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(queue, <span class="st">"output/manual_queue.csv"</span>)</span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">"output/pages.csv"</span>, <span class="st">"output/ocr_words.csv"</span>, <span class="st">"output/manual_queue.csv"</span>, draft_files, review_files)</span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -1,3 +1,29 @@
 # Europe Journal, 1966
 
-Transcription pending. Source file: `vol2.pdf`. This is a separate document from the WWII journals and is processed in its own run.
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(knitr)
+source("R/proofread.R")
+source("R/book_helpers.R")
+final <- apply_corrections()
+vol <- "vol2"
+```
+
+Source file: `vol2.pdf`. This is a separate document from the WWII journals and is processed in its own run. Pages 1 to 6 are front matter (a three-page table of contents, an itinerary and a mail schedule); entries begin on page 7 with the entry for Friday, 24 June 1966. The text includes German, French and Dutch names.
+
+```{r}
+#| label: tbl-status
+#| tbl-cap: "Review status of this document."
+volume_status(final) |> filter(volume == vol) |> kable()
+```
+
+The text below is published only after review. Until then the chunk is switched off. To publish, change `eval: false` to `eval: true` in the chunk and render. Pages that still show `ocr_draft` in the status table are unreviewed OCR, and `[?word]` marks flag words that were not resolved.
+
+```{r}
+#| label: transcription
+#| eval: false
+#| results: asis
+cat(volume_markdown(final, vol))
+```

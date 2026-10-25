@@ -1,0 +1,15 @@
+{
+  "hash": "7f618700f92745a270bc9ddb660cc067",
+  "result": {
+    "engine": "knitr",
+    "markdown": "# Europe Journal, 1966\n\n\n\n\n\n\n\n\n\nSource file: `vol2.pdf`. This is a separate document from the WWII journals and is processed in its own run. Pages 1 to 6 are front matter (a three-page table of contents, an itinerary and a mail schedule); entries begin on page 7 with the entry for Friday, 24 June 1966. The text includes German, French and Dutch names.\n\n\n\n\n::: {#tbl-status .cell tbl-cap='Review status of this document.'}\n\n```{.r .cell-code}\nvolume_status(final) |> filter(volume == vol) |> kable()\n```\n\n::: {.cell-output-display}\n\n\n|volume | pages| tier_A| tier_B| tier_C| edited| confirmed| ocr_draft_only|\n|:------|-----:|------:|------:|------:|------:|---------:|--------------:|\n|vol2   |   188|     14|     48|    126|      0|         0|            188|\n\n\n:::\n:::\n\n\n\n\nThe text below is published only after review. Until then the chunk is switched off. To publish, change `eval: false` to `eval: true` in the chunk and render. Pages that still show `ocr_draft` in the status table are unreviewed OCR, and `[?word]` marks flag words that were not resolved.\n\n\n\n\n\n```{.r .cell-code}\ncat(volume_markdown(final, vol))\n```\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

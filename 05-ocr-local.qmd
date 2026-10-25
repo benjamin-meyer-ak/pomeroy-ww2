@@ -1,3 +1,81 @@
 # Local OCR
 
-Tesseract with magick preprocessing for faded pages.
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(knitr)
+```
+
+## Method
+
+Every page is run through Tesseract in its automatic page-segmentation mode (`psm 3`) on a grayscale image. For each page the script saves the full text and a word table with confidence and bounding box. Results are cached one file per page, so an interrupted run resumes and nothing is recomputed unnecessarily.
+
+```{r}
+#| file: R/ocr_pipeline.R
+#| eval: false
+```
+
+The whole set of 378 pages runs in parallel across worker processes. With six workers it takes about 2.6 seconds per page, roughly 20 minutes in total. Pages already in the cache are skipped unless they were made with different languages. Languages come from `data/volume_config.csv`, and `ensure_languages()` installs any that are missing before the run starts.
+
+```{r}
+#| file: R/run_ocr.R
+#| eval: false
+```
+
+## Settings that were tried
+
+Two small experiments ran on the prepared page images, with the code below. Both are rerun by the pipeline and their results are saved in `data/interim/experiments/`, so the numbers in this chapter are regenerated, not typed in.
+
+```{r}
+#| file: R/experiments.R
+#| eval: false
+```
+
+### Page-segmentation mode
+
+Ten pages covering every layout were run under three Tesseract page-segmentation modes: `psm 3` (automatic), `psm 4` (single column) and `psm 6` (single block).
+
+```{r}
+#| label: tbl-psm
+#| tbl-cap: "Mean word confidence and word count by mode, averaged over the ten sample pages."
+psm <- read_csv("data/interim/experiments/psm_comparison.csv", show_col_types = FALSE)
+psm |>
+  summarise(.by = psm, mean_conf = mean(mean_conf), words_per_page = mean(words),
+            pct_below_80 = mean(pct_below_80)) |>
+  kable(digits = 1)
+```
+
+```{r}
+#| label: tbl-psm-pages
+#| tbl-cap: "Mean word confidence for each sample page under each mode."
+psm |>
+  select(page_id, psm, mean_conf) |>
+  pivot_wider(names_from = psm, names_prefix = "psm ", values_from = mean_conf) |>
+  kable(digits = 1)
+```
+
+On most pages the three modes are within about a point of each other (`psm 6` is up to four points lower on a few). The difference appears on the two-column page (`vol3_p087`): `psm 6` reads across both columns as one block and scores about ten points lower with more words, which is the signature of merged columns. `psm 3` was used for the full pass as a reasonable default. Mean confidence is only a proxy for accuracy, so this is not a proven best.
+
+### Preprocessing
+
+Hard thresholding (pure black and white) and a contrast boost were compared with the unprocessed image on one page from each of three volumes.
+
+```{r}
+#| label: tbl-preprocess
+#| tbl-cap: "Effect of preprocessing on mean word confidence."
+read_csv("data/interim/experiments/preprocessing_comparison.csv", show_col_types = FALSE) |>
+  select(page_id, variant, words, mean_conf) |>
+  pivot_wider(names_from = variant, values_from = c(words, mean_conf)) |>
+  kable(digits = 1)
+```
+
+Thresholding is not a safe improvement. It leaves the faded-ribbon page (`vol1_p010`) about where it was and cuts the word count, and it drops a clean page (`vol2_p040`) from 93 to about 33. Contrast changes little either way. No preprocessing is applied.
+
+## What is still unknown
+
+The choice of mode, preprocessing and languages should be made by comparing OCR output with hand-typed text and computing the character error rate. No such reference pages exist yet. When they do, the comparison should cover each layout: clean portrait, spread, faded ribbon, two-column and front matter.
+
+## Languages
+
+The first pass used English only. The 1966 journal has German, French and Dutch names, which English-only OCR tends to garble. The config asks for `eng+deu+fra` for volume 2, and the pipeline installs the missing models and redoes the pages whose cached result used different languages. Rerun before reviewing volume 2: saved corrections replace the OCR text for their page, so a later rerun would not improve pages already corrected.

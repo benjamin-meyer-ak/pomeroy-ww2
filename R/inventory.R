@@ -49,3 +49,16 @@ flag_pages <- function(inv, blank_ink = 0.003, dup_dist = 0.15) {
     ) |>
     select(-sig)
 }
+
+# Inventory every PDF listed in the config and write one table. Duplicate
+# detection runs over all pages together, so a repeat across files (such as
+# vol1 p102 and vol3 p1) is found too.
+run_inventory <- function(config, pdf_files = NULL, out = "data/interim/page_inventory.csv", dpi = 40) {
+  inv <- map(config$file, profile_volume, dpi = dpi) |> list_rbind() |> flag_pages()
+  inv <- inv |>
+    mutate(nearest_id = page_id[nearest_page]) |>
+    select(-nearest_page)
+  dir.create(dirname(out), showWarnings = FALSE, recursive = TRUE)
+  write_csv(inv, out)
+  out
+}

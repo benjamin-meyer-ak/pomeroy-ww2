@@ -1,0 +1,15 @@
+{
+  "hash": "c73587d4638e666724c84128ff049372",
+  "result": {
+    "engine": "knitr",
+    "markdown": "# WWII Journal, Volume 1\n\n\n\n\n\n\n\n\n\nSource file: `vol1.pdf`. The WWII volume number is not yet confirmed.\n\n\n\n\n::: {#tbl-status .cell tbl-cap='Review status of this volume.'}\n\n```{.r .cell-code}\nvolume_status(final) |> filter(volume == vol) |> kable()\n```\n\n::: {.cell-output-display}\n\n\n|volume | pages| tier_A| tier_B| tier_C| edited| confirmed| ocr_draft_only|\n|:------|-----:|------:|------:|------:|------:|---------:|--------------:|\n|vol1   |   102|     20|     15|     67|      1|         0|            101|\n\n\n:::\n:::\n\n\n\n\nThe text below is published only after review. Until then the chunk is switched off. To publish, change `eval: false` to `eval: true` in the chunk and render. Pages that still show `ocr_draft` in the status table are unreviewed OCR, and `[?word]` marks flag words that were not resolved.\n\n\n\n\n\n```{.r .cell-code}\ncat(volume_markdown(final, vol))\n```\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

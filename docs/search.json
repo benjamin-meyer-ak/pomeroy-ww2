@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Pomeroy WWII Journals: An OCR Transcription Pipeline",
     "section": "",
-    "text": "Preface\nTranscription of the WWII journals of Richard Pomeroy, three typewritten volumes (364 pages), and the reproducible R pipeline used to produce it.\nThe source scans are available as a download from Google Drive here:\n\nDownload R Pomeroy WWII Journals\n\nThis book documents the analysis pipeline and publishes the resulting transcription. Downloads of the transcription (DOCX, searchable PDF, and per-page CSV) are linked in the Assembly chapter.",
+    "text": "Preface\nThis document is a transcription of the WWII journals of Dr.Richard Pomeroy. It contains three typewritten volumes (364 pages), two from military deployment 1943-1945 and one from a family trip to Europe in 1966.\nThe source scans are available as a download from Google Drive here:\n\nDownload Dr. Richard Pomeroy’s WWII (1943-1945) and Travel Journals (1966)\n\nThis book documents the transcription code pipeline and publishes the resulting documents. Downloads of the transcription (DOCX, searchable PDF, and per-page CSV) are linked in the Assembly chapter.",
     "crumbs": [
       "Preface"
     ]
@@ -14,7 +14,17 @@
     "href": "01-overview.html",
     "title": "1  Overview",
     "section": "",
-    "text": "1.1 Goals",
+    "text": "1.1 Goals\nThe aim is a readable, searchable transcription of Dr. Richard Pomeroy’s typewritten journals, produced by a pipeline that anyone can rerun and inspect. Three principles guide the work:",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Overview</span>"
+    ]
+  },
+  {
+    "objectID": "01-overview.html#goals",
+    "href": "01-overview.html#goals",
+    "title": "1  Overview",
+    "section": "",
+    "text": "Automate what can be automated. Optical character recognition (OCR) handles the bulk of the text. People are asked to type or check only the pages the software handles poorly.\nStay near-verbatim. The text is not modernised or silently corrected. Where the OCR is unsure of a word, the word is flagged. Every human fix is recorded in a single file, data/corrections.csv, so each change can be traced.\nKeep the record reproducible. One command, targets::tar_make(), rebuilds everything from the scans, and every script is shown in full in this book. Package versions are pinned and the settings that differ between volumes live in one file. See Setup for the steps. Rendering the book never reruns OCR.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Overview</span>"
     ]
@@ -24,7 +34,7 @@
     "href": "01-overview.html#source-material",
     "title": "1  Overview",
     "section": "1.2 Source material",
-    "text": "1.2 Source material\nThree typewritten PDFs: volume 1 (174 pages), volume 2 (102 pages), volume 3 (88 pages).",
+    "text": "1.2 Source material\nThree typewritten PDFs were scanned from bound or loose pages. None has an embedded text layer, so every page needs OCR.\n\n\nShow code\nread_csv(\"data/volume_config.csv\", show_col_types = FALSE) |&gt;\n  select(file, document, pages = n_pages, layout, text_side) |&gt;\n  kable()\n\n\n\n\nTable 1.1: Source files, as recorded in data/volume_config.csv.\n\n\n\n\n\n\nfile\ndocument\npages\nlayout\ntext_side\n\n\n\n\nvol1.pdf\nwwii\n102\nspread\nright\n\n\nvol3.pdf\nwwii\n88\nspread\nright\n\n\nvol2.pdf\neurope1966\n188\npage\nfull\n\n\n\n\n\n\n\n\nThe two WWII files (vol1.pdf, vol3.pdf) are scanned as two-page spreads in which only the right-hand page carries text. The 1966 Europe journal (vol2.pdf) is a separate document of single portrait pages and is processed in its own run. The WWII volume numbering is not yet confirmed, so the book refers to the files by name.\nThe preface quotes 364 pages, while the PDFs contain 378 (102 + 188 + 88). The difference has not been reconciled. Front matter in the 1966 journal and duplicated pages in the scans are likely contributors.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Overview</span>"
     ]
@@ -34,7 +44,7 @@
     "href": "01-overview.html#pipeline-at-a-glance",
     "title": "1  Overview",
     "section": "1.3 Pipeline at a glance",
-    "text": "1.3 Pipeline at a glance",
+    "text": "1.3 Pipeline at a glance\n\n\nShow code\nflowchart LR\n  A[PDF scans] --&gt; B[Inventory and cropping]\n  B --&gt; C[300 DPI page images]\n  C --&gt; D[Tesseract OCR]\n  D --&gt; E[Triage into tiers A, B, C]\n  E --&gt; F[Proofreading app]\n  F --&gt; G[corrections.csv]\n  G --&gt; H[Final text, DOCX, PDF, CSV]\n  E -.-&gt; I[Vision model for front matter and two-column pages, planned]\n  I -.-&gt; F\n\n\n\n\n\nflowchart LR\n  A[PDF scans] --&gt; B[Inventory and cropping]\n  B --&gt; C[300 DPI page images]\n  C --&gt; D[Tesseract OCR]\n  D --&gt; E[Triage into tiers A, B, C]\n  E --&gt; F[Proofreading app]\n  F --&gt; G[corrections.csv]\n  G --&gt; H[Final text, DOCX, PDF, CSV]\n  E -.-&gt; I[Vision model for front matter and two-column pages, planned]\n  I -.-&gt; F\n\n\n\n\n\n\nEach step is described in its own chapter. Chapters on steps that exist (extraction, triage, local OCR, proofreading) show the real code and measured results. Chapters on steps that are not yet built (vision-model fallback, assembly) say so plainly.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Overview</span>"
     ]
@@ -44,7 +54,7 @@
     "href": "01-overview.html#rights-and-ethics",
     "title": "1  Overview",
     "section": "1.4 Rights and ethics",
-    "text": "1.4 Rights and ethics",
+    "text": "1.4 Rights and ethics\nThe journals are family papers. The owner has agreed to their public release, including the names they contain. The scans themselves are not stored in this repository; they are shared through the download link in the preface.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Overview</span>"
     ]
@@ -52,31 +62,71 @@
   {
     "objectID": "02-setup.html",
     "href": "02-setup.html",
-    "title": "2  Setup",
+    "title": "2  Setup and Reproducing the Work",
     "section": "",
-    "text": "2.1 Packages and renv",
+    "text": "2.1 Rebuilding from scratch\nThis chapter says what is needed to rebuild the transcription from the scanned PDFs, and shows the file that runs every step in order. Every script the project uses is shown in full in the chapter for its step. The only things not generated by code are the three scans, the settings file data/volume_config.csv (described below) and the human corrections in data/corrections.csv.\nWith the three PDFs saved as data/raw_pdf/vol1.pdf, vol2.pdf and vol3.pdf:\nStep 3 is the single entry point. It profiles every page, downloads any missing Tesseract language data, crops and OCRs all 378 pages, builds the triage tables, runs the settings experiments and applies the corrections. It takes roughly 30 minutes on a six-core machine (about 4 minutes for the inventory, 20 for OCR, the rest for tiering and experiments). Steps whose inputs have not changed are skipped on a rerun, and OCR results are cached page by page, so an interrupted run resumes where it stopped.\nShow code\n# The whole pipeline, from the scanned PDFs to the final tables. Run with\n#   targets::tar_make()\n# Steps whose inputs have not changed are skipped; OCR results are also cached\n# page by page in data/interim/ocr/, so an interrupted run resumes.\nlibrary(targets)\ntar_source(\"R\")\ntar_option_set(packages = c(\"tidyverse\", \"pdftools\", \"magick\", \"tesseract\"))\n\nlist(\n  # Inputs: per-volume settings and the scans\n  tar_target(config_file, \"data/volume_config.csv\", format = \"file\"),\n  tar_target(config, read_csv(config_file, show_col_types = FALSE)),\n  tar_target(pdf_files, file.path(\"data/raw_pdf\", config$file), format = \"file\"),\n\n  # Step 1: profile every page (blank, duplicate and layout checks)\n  tar_target(inventory_file, run_inventory(config, pdf_files), format = \"file\"),\n\n  # Step 2: crop, render and OCR every page\n  tar_target(languages, ensure_languages(config)),\n  tar_target(ocr_files, run_ocr(config, pdf_files, languages), format = \"file\"),\n\n  # Step 3: tiers, draft text, review images, manual queue\n  tar_target(output_files, build_outputs(config, ocr_files), format = \"file\"),\n\n  # Step 4: settings experiments reported in the book\n  tar_target(experiment_files, run_experiments(ocr_files), format = \"file\"),\n\n  # Step 5: final text = OCR draft with the human corrections applied\n  tar_target(corrections_file, \"data/corrections.csv\", format = \"file\"),\n  tar_target(final, {\n    output_files\n    apply_corrections(corr_path = corrections_file)\n  })\n)\nShow code\nflowchart TD\n  config[volume_config.csv] --&gt; inv[Inventory]\n  pdf[Scanned PDFs] --&gt; inv\n  config --&gt; lang[Install languages]\n  lang --&gt; ocr[Crop and OCR every page]\n  pdf --&gt; ocr\n  ocr --&gt; out[Tiers, drafts, review images]\n  ocr --&gt; exp[Settings experiments]\n  out --&gt; final[Final text]\n  corr[corrections.csv] --&gt; final\n\n\n\n\n\nflowchart TD\n  config[volume_config.csv] --&gt; inv[Inventory]\n  pdf[Scanned PDFs] --&gt; inv\n  config --&gt; lang[Install languages]\n  lang --&gt; ocr[Crop and OCR every page]\n  pdf --&gt; ocr\n  ocr --&gt; out[Tiers, drafts, review images]\n  ocr --&gt; exp[Settings experiments]\n  out --&gt; final[Final text]\n  corr[corrections.csv] --&gt; final\nTwo checks were made that a rerun gives the same answer. Re-running the inventory from scratch reproduced the earlier ink measurements exactly. Re-cropping and re-OCRing three pages from three different files gave identical text, word boxes and confidences (apart from floating-point noise of about 1e-14).",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Setup</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Setup and Reproducing the Work</span>"
     ]
   },
   {
-    "objectID": "02-setup.html#tesseract",
-    "href": "02-setup.html#tesseract",
-    "title": "2  Setup",
-    "section": "2.2 Tesseract",
-    "text": "2.2 Tesseract",
+    "objectID": "02-setup.html#rebuilding-from-scratch",
+    "href": "02-setup.html#rebuilding-from-scratch",
+    "title": "2  Setup and Reproducing the Work",
+    "section": "",
+    "text": "Open the RStudio project (or set the working directory to the project root).\nRestore the package versions recorded in renv.lock: renv::restore(lockfile = \"renv.lock\").\nRun the whole pipeline: targets::tar_make().\nRender the book: quarto render.",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Setup</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Setup and Reproducing the Work</span>"
     ]
   },
   {
-    "objectID": "02-setup.html#api-keys",
-    "href": "02-setup.html#api-keys",
-    "title": "2  Setup",
-    "section": "2.3 API keys",
-    "text": "2.3 API keys",
+    "objectID": "02-setup.html#system-requirements",
+    "href": "02-setup.html#system-requirements",
+    "title": "2  Setup and Reproducing the Work",
+    "section": "2.2 System requirements",
+    "text": "2.2 System requirements\nThe R packages bundle their own copies of the native libraries, so no separate installs are needed on Windows:\n\n\n\n\n\n\n\nComponent\nProvided by\n\n\n\n\nPDF rendering (poppler)\npdftools\n\n\nImage processing (ImageMagick)\nmagick\n\n\nOCR engine (Tesseract) and the English model\ntesseract\n\n\nOther language models (deu, fra)\ndownloaded by the pipeline with tesseract_download()\n\n\n\nThe language models are the one thing fetched from the internet during a run. Tesseract’s results can differ slightly between engine and model versions, so the versions below are part of the record.",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Setup</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Setup and Reproducing the Work</span>"
+    ]
+  },
+  {
+    "objectID": "02-setup.html#package-versions",
+    "href": "02-setup.html#package-versions",
+    "title": "2  Setup and Reproducing the Work",
+    "section": "2.3 Package versions",
+    "text": "2.3 Package versions\nExact versions are pinned in renv.lock. The ones that matter most for the output:\n\n\nShow code\ntribble(\n  ~package, ~used_for,\n  \"pdftools\", \"Render PDF pages to images and read page sizes\",\n  \"magick\", \"Crop, convert and annotate page images\",\n  \"tesseract\", \"Local OCR with word-level confidence\",\n  \"spelling\", \"Dictionary check used to flag unfamiliar words\",\n  \"targets\", \"Runs the pipeline and skips finished steps\",\n  \"tidyverse\", \"Data handling and plots\",\n  \"shiny\", \"Proofreading app\",\n  \"bslib\", \"Proofreading app layout\",\n  \"ellmer\", \"Vision-model calls (planned, not yet used)\"\n) |&gt;\n  mutate(version = map_chr(package, \\(p) as.character(packageVersion(p)))) |&gt;\n  kable()\n\n\n\n\nTable 2.1: Main packages and the versions that built this book.\n\n\n\n\n\n\npackage\nused_for\nversion\n\n\n\n\npdftools\nRender PDF pages to images and read page sizes\n3.9.1\n\n\nmagick\nCrop, convert and annotate page images\n2.9.1\n\n\ntesseract\nLocal OCR with word-level confidence\n5.3.1\n\n\nspelling\nDictionary check used to flag unfamiliar words\n2.3.2\n\n\ntargets\nRuns the pipeline and skips finished steps\n1.12.0\n\n\ntidyverse\nData handling and plots\n2.0.0\n\n\nshiny\nProofreading app\n1.14.0\n\n\nbslib\nProofreading app layout\n0.12.0\n\n\nellmer\nVision-model calls (planned, not yet used)\n0.5.0\n\n\n\n\n\n\n\n\nTesseract engine version 5.3.2. Languages installed on the machine that built this book: eng, osd. The 1966 journal is configured for eng+deu+fra, so the pipeline downloads deu and fra the first time it runs on a machine that lacks them, and re-OCRs volume 2 if it was previously processed with fewer languages.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Setup and Reproducing the Work</span>"
+    ]
+  },
+  {
+    "objectID": "02-setup.html#the-settings-file",
+    "href": "02-setup.html#the-settings-file",
+    "title": "2  Setup and Reproducing the Work",
+    "section": "2.4 The settings file",
+    "text": "2.4 The settings file\nEverything that differs between volumes lives in one table, data/volume_config.csv. The pipeline reads it; nothing about a particular volume is written into the scripts.\n\n\nShow code\nread_csv(\"data/volume_config.csv\", show_col_types = FALSE) |&gt;\n  select(-notes) |&gt;\n  kable()\n\n\n\n\nTable 2.2: data/volume_config.csv.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nvolume_id\nfile\ndocument\nn_pages\nlayout\ntext_side\nportrait_pages\nfront_matter_pages\nfirst_entry_page\ncheck_pages\nforce_manual_pages\nduplicate_pairs\nocr_langs\n\n\n\n\nvol1\nvol1.pdf\nwwii\n102\nspread\nright\n1;44-46\nNA\nNA\n38-54;69\nNA\n77=78;96=97;vol1:102=vol3:1\neng\n\n\nvol3\nvol3.pdf\nwwii\n88\nspread\nright\nNA\nNA\nNA\n36;87-88\n87-88\nvol3:1=vol1:102\neng\n\n\nvol2\nvol2.pdf\neurope1966\n188\npage\nfull\nNA\n1-6\n7\n3;4;27;116;158\n1-6\nNA\neng+deu+fra\n\n\n\n\n\n\n\n\nThe file is written by hand, from the inventory (see Page Extraction) and from looking at the scans. It is the record of those judgments:\n\n\n\n\n\n\n\nColumn\nMeaning and source\n\n\n\n\nlayout, text_side\nspread or page; which half of a spread holds the text. From the inventory’s page shapes and ink on each half.\n\n\nportrait_pages\nPages in a spread file that are single pages and are not cropped. From the inventory’s orientation column.\n\n\nfront_matter_pages, first_entry_page\nRead from the scans (vol2 only so far).\n\n\ncheck_pages\nPages worth a second look because the inventory flagged them. Informational.\n\n\nforce_manual_pages\nPages sent straight to tier A because OCR is known to fail on their layout.\n\n\nduplicate_pairs\nPages that look repeated, from the inventory’s duplicate check. Informational: none is dropped.\n\n\nocr_langs\nTesseract languages, joined with +.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Setup and Reproducing the Work</span>"
+    ]
+  },
+  {
+    "objectID": "02-setup.html#keys",
+    "href": "02-setup.html#keys",
+    "title": "2  Setup and Reproducing the Work",
+    "section": "2.5 Keys",
+    "text": "2.5 Keys\nVision-model transcription is planned but not used so far. When it is added, API keys will be read from environment variables set in .Renviron, which is excluded from version control.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Setup and Reproducing the Work</span>"
+    ]
+  },
+  {
+    "objectID": "02-setup.html#project-layout",
+    "href": "02-setup.html#project-layout",
+    "title": "2  Setup and Reproducing the Work",
+    "section": "2.6 Project layout",
+    "text": "2.6 Project layout\nScans and page images stay on the local machine. Everything else is committed, including the cached OCR, so the book can be rebuilt without redoing the 20-minute OCR step.\n\n\n\n\n\n\n\n\nPath\nContents\nIn git\n\n\n\n\ndata/raw_pdf/\nThe three scanned PDFs\nNo\n\n\ndata/pages/\n300 DPI page PNGs and review images\nNo\n\n\ndata/interim/\nPage inventory, cached OCR results, experiment results\nYes\n\n\ndata/volume_config.csv\nPer-volume settings\nYes\n\n\ndata/corrections.csv\nHuman fixes from the proofreading app\nYes\n\n\noutput/\nPage table, word table, drafts, downloads\nYes\n\n\nR/\nPipeline code\nYes\n\n\n_targets.R\nThe pipeline definition\nYes\n\n\nrenv.lock\nPinned package versions\nYes\n\n\n_targets/\nThe targets cache\nNo\n\n\nproofread/\nProofreading app\nYes\n\n\ndocs/\nRendered book\nYes",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Setup and Reproducing the Work</span>"
     ]
   },
   {
@@ -84,7 +134,37 @@
     "href": "03-extraction.html",
     "title": "3  Page Extraction",
     "section": "",
-    "text": "Convert each PDF to zero-padded 300 DPI PNGs (vol1_p001.png).",
+    "text": "3.1 Inventory\nExtraction turns each PDF page into a 300 DPI PNG named vol1_p001.png, ready for OCR. It has two parts: a quick inventory of every page, and, for the spread scans, cropping to the page that holds text.\nBefore extracting anything, each page is rendered at low resolution and profiled for ink amount, size and similarity to other pages. This finds blank pages, near-duplicate pages and the layout of each volume.\nOne measurement choice mattered. Typewriter strokes are thin and wash out at low resolution, so an absolute darkness cutoff misses real text. “Ink” is therefore measured relative to each page’s own median brightness.\nShow code\n# Inventory step: profile every page at low DPI to find blank pages, duplicate\n# pages (24x24 block-mean signature) and front matter. Run per volume.\n# Typewriter strokes are thin and wash out at 30 DPI, so \"ink\" is measured\n# relative to each page's own median luminance, not an absolute threshold.\nlibrary(pdftools)\nlibrary(tidyverse)\n\nblock_mean &lt;- function(m, n = 24) {\n  ri &lt;- cut(seq_len(nrow(m)), n, labels = FALSE)\n  ci &lt;- cut(seq_len(ncol(m)), n, labels = FALSE)\n  as.vector(tapply(m, list(factor(ri, 1:n)[row(m)], factor(ci, 1:n)[col(m)]), mean))\n}\n\nprofile_page &lt;- function(pdf, page, dpi = 40) {\n  a &lt;- pdf_render_page(pdf, page = page, dpi = dpi, numeric = TRUE)\n  g &lt;- (a[, , 1] + a[, , 2] + a[, , 3]) / 3\n  h &lt;- nrow(g); w &lt;- ncol(g)\n  cut_at &lt;- median(g) - 0.12\n  ink &lt;- function(m) mean(m &lt; cut_at)\n  trim &lt;- function(m) m[round(h * .06):round(h * .94), ]\n  tibble(\n    width_px = w, height_px = h, mean_lum = mean(g), sd_lum = sd(g),\n    ink = ink(trim(g[, round(w * .06):round(w * .94)])),\n    ink_left = ink(trim(g[, round(w * .06):round(w * .5)])),\n    ink_right = ink(trim(g[, round(w * .5):round(w * .94)])),\n    sig = list(block_mean(g))\n  )\n}\n\nprofile_volume &lt;- function(file, dpi = 40) {\n  pdf &lt;- file.path(\"data/raw_pdf\", file)\n  vol &lt;- tools::file_path_sans_ext(file)\n  tibble(file = file, page_id = sprintf(\"%s_p%03d\", vol, seq_len(pdf_info(pdf)$pages))) |&gt;\n    mutate(page = row_number(), prof = map(page, \\(p) profile_page(pdf, p, dpi))) |&gt;\n    unnest(prof)\n}\n\nflag_pages &lt;- function(inv, blank_ink = 0.003, dup_dist = 0.15) {\n  sigm &lt;- do.call(rbind, inv$sig)\n  d &lt;- as.matrix(dist(sigm)); diag(d) &lt;- Inf\n  nn &lt;- apply(d, 1, which.min)\n  inv |&gt;\n    mutate(\n      orientation = if_else(width_px &gt; height_px, \"landscape\", \"portrait\"),\n      is_blank = ink &lt; blank_ink,\n      nearest_page = nn,\n      nearest_dist = d[cbind(seq_along(nn), nn)],\n      possible_dup = nearest_dist &lt; dup_dist\n    ) |&gt;\n    select(-sig)\n}\n\n# Inventory every PDF listed in the config and write one table. Duplicate\n# detection runs over all pages together, so a repeat across files (such as\n# vol1 p102 and vol3 p1) is found too.\nrun_inventory &lt;- function(config, pdf_files = NULL, out = \"data/interim/page_inventory.csv\", dpi = 40) {\n  inv &lt;- map(config$file, profile_volume, dpi = dpi) |&gt; list_rbind() |&gt; flag_pages()\n  inv &lt;- inv |&gt;\n    mutate(nearest_id = page_id[nearest_page]) |&gt;\n    select(-nearest_page)\n  dir.create(dirname(out), showWarnings = FALSE, recursive = TRUE)\n  write_csv(inv, out)\n  out\n}\nShow code\nread_csv(\"data/interim/page_inventory.csv\", show_col_types = FALSE) |&gt;\n  count(file, orientation, name = \"pages\") |&gt;\n  kable()\n\n\n\n\nTable 3.1: Pages by orientation in each scan.\n\n\n\n\n\n\nfile\norientation\npages\n\n\n\n\nvol1.pdf\nlandscape\n98\n\n\nvol1.pdf\nportrait\n4\n\n\nvol2.pdf\nportrait\n188\n\n\nvol3.pdf\nlandscape\n88\nrun_inventory() at the end of the script writes one table, data/interim/page_inventory.csv, for all three files. Duplicate detection compares every page with every other page, including pages in other files.\nShow code\nread_csv(\"data/interim/page_inventory.csv\", show_col_types = FALSE) |&gt;\n  filter(possible_dup) |&gt;\n  select(page_id, nearest_id, nearest_dist) |&gt;\n  kable(digits = 3)\n\n\n\n\nTable 3.2: Page pairs flagged as near-duplicates (signature distance below 0.15).\n\n\n\n\n\n\npage_id\nnearest_id\nnearest_dist\n\n\n\n\nvol1_p077\nvol1_p078\n0.034\n\n\nvol1_p078\nvol1_p077\n0.034\n\n\nvol1_p096\nvol1_p097\n0.014\n\n\nvol1_p097\nvol1_p096\n0.014\nWhat the inventory found:",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Page Extraction</span>"
+    ]
+  },
+  {
+    "objectID": "03-extraction.html#inventory",
+    "href": "03-extraction.html#inventory",
+    "title": "3  Page Extraction",
+    "section": "",
+    "text": "vol2.pdf has no blank or duplicate pages. Its first six pages are front matter (a three-page table of contents, an itinerary and a mail schedule); entries begin on page 7, giving 182 entry pages. A few sparse pages are short text, not blanks.\nvol1.pdf and vol3.pdf carry text on the right half of every spread. In vol1.pdf, pages 1 and 44 to 46 are portrait pages.\nSome pages look like duplicates: vol1 pages 77 and 78, and 96 and 97 (near-identical). vol1 page 102 also appears to repeat vol3 page 1, but the match is weaker: each is the other’s nearest page, at a distance of 0.165, just outside the 0.15 cutoff. It is recorded in the config. None has been removed yet.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Page Extraction</span>"
+    ]
+  },
+  {
+    "objectID": "03-extraction.html#cropping-spreads",
+    "href": "03-extraction.html#cropping-spreads",
+    "title": "3  Page Extraction",
+    "section": "3.2 Cropping spreads",
+    "text": "3.2 Cropping spreads\nA spread contains a text page, a mostly blank facing page and a dark binding shadow. Splitting every spread down the middle would leave shadow in the OCR input, so the crop is detected per page:\n\nRender the spread at 100 DPI and find the spine, the darkest lines near the centre, plus any graded shadow touching it.\nTrim scan borders on the outer edge and at the top and bottom.\nApply the detected box to a 300 DPI render of the same page.\n\n\n\nShow code\n# Crop a scanned spread to its text page and trim the binding shadow and scan\n# borders. Geometry is detected on a cheap low-DPI render, then applied to the\n# full-resolution render. Only the right-hand page holds text in vol1/vol3\n# (see data/volume_config.csv), so side = \"right\" is the default.\nlibrary(pdftools)\nlibrary(magick)\nlibrary(tidyverse)\n\ngray_matrix &lt;- function(img) {\n  a &lt;- image_data(image_convert(img, colorspace = \"gray\"), channels = \"gray\")\n  # rows = x (columns of the picture), cols = y\n  matrix(as.integer(a[1, , ]), nrow = dim(a)[2]) / 255\n}\n\n# last/first run helpers: extend a boundary while the profile stays dark\nextend_while_dark &lt;- function(is_dark, start, dir, max_steps) {\n  pos &lt;- start\n  for (i in seq_len(max_steps)) {\n    nxt &lt;- pos + dir\n    if (nxt &lt; 1 || nxt &gt; length(is_dark) || !is_dark[nxt]) break\n    pos &lt;- nxt\n  }\n  pos\n}\n\n# Returns fractional box (x0, x1, y0, y1) of the text page, in 0-1 of the spread\ndetect_text_box &lt;- function(m, side = \"right\", dark_drop = 0.1, pad = 0.01) {\n  w &lt;- nrow(m); h &lt;- ncol(m)\n  colmed &lt;- apply(m, 1, median)\n  paper &lt;- quantile(colmed[round(w * .55):round(w * .9)], .9)\n  dark &lt;- colmed &lt; paper - dark_drop\n\n  # Spine: darkest lines near the centre, then any graded shadow touching them\n  centre &lt;- round(w * .4):round(w * .6)\n  spine &lt;- centre[dark[centre]]\n  spine_end &lt;- if (length(spine)) max(spine) else round(w * .5)\n  colmean &lt;- colMeans(t(m))\n  graded &lt;- colmean &lt; mean(colmean[round(w * .55):round(w * .9)]) - 0.04\n  spine_end &lt;- extend_while_dark(graded, spine_end, +1, round(w * .06))\n  x0 &lt;- spine_end + round(w * pad)\n\n  # Outer scan border on the far edge\n  edge &lt;- round(w * .93):w\n  edge_dark &lt;- edge[dark[edge]]\n  x1 &lt;- if (length(edge_dark)) min(edge_dark) - round(w * pad) else w\n\n  # Top/bottom borders, measured over the text page only\n  rowmed &lt;- apply(m[x0:x1, , drop = FALSE], 2, median)\n  rdark &lt;- rowmed &lt; median(rowmed) - dark_drop\n  top &lt;- which(rdark[seq_len(round(h * .06))])\n  bot &lt;- which(rdark) |&gt; keep(\\(y) y &gt; h * .94)\n  y0 &lt;- if (length(top)) max(top) + round(h * pad) else 1\n  y1 &lt;- if (length(bot)) min(bot) - round(h * pad) else h\n\n  if (side == \"left\") stop(\"left-side text is not used in these volumes\")\n  c(x0 = x0 / w, x1 = x1 / w, y0 = y0 / h, y1 = y1 / h)\n}\n\n# page: 1-based PDF page. Returns a magick image at out_dpi.\ncrop_text_half &lt;- function(pdf, page, out_dpi = 300, detect_dpi = 100, side = \"right\") {\n  render &lt;- function(dpi) {\n    f &lt;- file.path(\"data/interim\", sprintf(\"render_%s_%03d_%d.png\",\n                                           tools::file_path_sans_ext(basename(pdf)), page, dpi))\n    on.exit(unlink(f))\n    pdf_convert(pdf, pages = page, dpi = dpi, format = \"png\", filenames = f, verbose = FALSE)\n    image_read(f)\n  }\n  box &lt;- detect_text_box(gray_matrix(render(detect_dpi)), side = side)\n  hi &lt;- render(out_dpi)\n  info &lt;- image_info(hi)\n  geom &lt;- geometry_area(\n    width = round((box[[\"x1\"]] - box[[\"x0\"]]) * info$width),\n    height = round((box[[\"y1\"]] - box[[\"y0\"]]) * info$height),\n    x_off = round(box[[\"x0\"]] * info$width),\n    y_off = round(box[[\"y0\"]] * info$height)\n  )\n  # repage drops the virtual canvas offset left by the crop\n  image_crop(hi, geom, repage = FALSE)\n}\n\n\nThe method worked on nine test pages. It leaves some shadow at the left edge of vol3 page 88 and a small dark corner on vol3 page 60.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Page Extraction</span>"
+    ]
+  },
+  {
+    "objectID": "03-extraction.html#writing-the-page-images",
+    "href": "03-extraction.html#writing-the-page-images",
+    "title": "3  Page Extraction",
+    "section": "3.3 Writing the page images",
+    "text": "3.3 Writing the page images\nprepare_page() in the OCR script (shown in Local OCR) applies the right path for each page: crop for spreads, full-page render for portrait pages and the 1966 journal. The helper that reads page lists such as 1;44-46 from the config is shared by several scripts:\n\n\nShow code\n# Small helpers shared by several steps.\nlibrary(tidyverse)\n\n# \"1;44-46\" -&gt; c(1, 44, 45, 46). Page lists in volume_config.csv use this form.\nparse_pages &lt;- function(x) {\n  if (is.na(x)) return(integer())\n  str_split_1(x, \";\") |&gt;\n    map(\\(s) { r &lt;- as.integer(str_split_1(s, \"-\")); seq(r[1], r[length(r)]) }) |&gt;\n    unlist()\n}\n\n\nPage images are written to data/pages/ and are not committed.",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Page Extraction</span>"
     ]
@@ -94,7 +174,47 @@
     "href": "04-triage.html",
     "title": "4  Quality Triage",
     "section": "",
-    "text": "Automatic confidence scoring with manual overrides in data/triage_overrides.csv.",
+    "text": "4.1 Flagging words\nNot every page needs the same attention. After OCR, each page is scored and placed in one of three tiers, so effort goes where it is needed.\nTesseract reports a confidence for every word. A word is flagged for review if either of these holds:\nNames and places are not in the dictionary, so they are flagged too. That adds noise but is harmless: a flag only asks a person to look. The opposite error is not caught. A real word that OCR misreads as a different real word, with high confidence, is not flagged.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Quality Triage</span>"
+    ]
+  },
+  {
+    "objectID": "04-triage.html#flagging-words",
+    "href": "04-triage.html#flagging-words",
+    "title": "4  Quality Triage",
+    "section": "",
+    "text": "its confidence is below 60, or\nit is not in the spelling package’s English dictionary.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Quality Triage</span>"
+    ]
+  },
+  {
+    "objectID": "04-triage.html#tiers",
+    "href": "04-triage.html#tiers",
+    "title": "4  Quality Triage",
+    "section": "4.2 Tiers",
+    "text": "4.2 Tiers\nA page’s tier depends on the share of its words that are flagged.\n\n\n\n\n\n\n\n\nTier\nRule\nTreatment\n\n\n\n\nA, manual\n25% or more of words flagged, fewer than 40 words, or forced\nType from the scan\n\n\nB, proofread\n10% to 25% flagged\nFix flagged words\n\n\nC, spot check\nUnder 10% flagged\nSpot check only\n\n\n\n“Forced” pages are listed in the force_manual_pages column of data/volume_config.csv: the 1966 front matter (pages 1 to 6) and the two-column newsletter pages in vol3 (87 and 88), where tesseract’s output is known to be unreliable regardless of its confidence.\n\n\nShow code\npages |&gt;\n  count(volume, tier) |&gt;\n  pivot_wider(names_from = tier, values_from = n, values_fill = 0) |&gt;\n  kable()\n\n\n\n\nTable 4.1: Pages per tier and volume.\n\n\n\n\n\n\nvolume\nA_manual\nB_proofread\nC_spot_check\n\n\n\n\nvol1\n20\n15\n67\n\n\nvol2\n14\n48\n126\n\n\nvol3\n2\n6\n80\n\n\n\n\n\n\n\n\n\n\nShow code\nggplot(pages, aes(mean_conf)) +\n  geom_histogram(binwidth = 2) +\n  facet_wrap(vars(volume), ncol = 1) +\n  labs(x = \"Mean word confidence (%)\", y = \"Pages\")\n\n\n\n\n\n\n\n\nFigure 4.1: Mean word confidence per page. Pages left of the main mass are the ones triage sends to people.\n\n\n\n\n\nThe median page scores 92% to 94% mean confidence, with 5% to 8% of words flagged. Most tier A pages in vol1 fall in pages 10 to 27, a section typed with a worn ribbon whose letters are broken but still legible to a person.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Quality Triage</span>"
+    ]
+  },
+  {
+    "objectID": "04-triage.html#limits",
+    "href": "04-triage.html#limits",
+    "title": "4  Quality Triage",
+    "section": "4.3 Limits",
+    "text": "4.3 Limits\nThe cutoffs above have not been tuned. Tuning needs hand-typed reference pages, which do not exist yet (see Local OCR). Treat the tiers as a sensible first sort, not a measured quality grade. A file of manual overrides, data/triage_overrides.csv, is planned so a person can move a page between tiers; it has not been created.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Quality Triage</span>"
+    ]
+  },
+  {
+    "objectID": "04-triage.html#code",
+    "href": "04-triage.html#code",
+    "title": "4  Quality Triage",
+    "section": "4.4 Code",
+    "text": "4.4 Code\nThe tiering, draft text and review images are produced by one script. It reads the cached OCR results, marks flagged words as [?word] in the draft text, and draws red boxes on the page images of tiers A and B for the proofreading app.\n\n\nShow code\n# Aggregate cached OCR into triage tiers, draft text, review images and the\n# manual queue. Reads data/interim/ocr/*.rds (see R/ocr_pipeline.R) and the\n# per-volume settings in data/volume_config.csv. Returns every file it writes.\nlibrary(tidyverse)\nlibrary(magick)\nsource(\"R/utils.R\")\n\nlow_conf_cut &lt;- 60   # tesseract word confidence below this is flagged\n\n# Pages the config forces into tier A (front matter, two-column layouts)\nforced_pages &lt;- function(config) {\n  config |&gt;\n    filter(!is.na(force_manual_pages)) |&gt;\n    mutate(page = map(force_manual_pages, parse_pages)) |&gt;\n    unnest(page) |&gt;\n    transmute(page_id = sprintf(\"%s_p%03d\", volume_id, page)) |&gt;\n    pull(page_id)\n}\n\n\n# Rebuild lines from word boxes so flagged words can be marked inline\nmark_text &lt;- function(w) {\n  w &lt;- w |&gt; mutate(ymid = (y0 + y1) / 2, h = y1 - y0)\n  lh &lt;- median(w$h)\n  w |&gt;\n    arrange(ymid, x0) |&gt;\n    mutate(line = cumsum(c(TRUE, diff(ymid) &gt; 0.6 * lh))) |&gt;\n    arrange(line, x0) |&gt;\n    mutate(out = if_else(flagged, paste0(\"[?\", word, \"]\"), word)) |&gt;\n    summarise(.by = line, txt = paste(out, collapse = \" \")) |&gt;\n    pull(txt) |&gt; paste(collapse = \"\\n\")\n}\n\nbuild_outputs &lt;- function(config, ocr_files = list.files(\"data/interim/ocr\", full.names = TRUE)) {\n  forced_manual &lt;- forced_pages(config)\n  res &lt;- map(ocr_files, readRDS) |&gt; set_names(tools::file_path_sans_ext(basename(ocr_files)))\n\n  words &lt;- map_dfr(res, \"words\") |&gt;\n    mutate(token = str_replace_all(word, \"^[^A-Za-z']+|[^A-Za-z']+$\", \"\"),\n           is_word = nchar(token) &gt;= 2)\n  bad &lt;- spelling::spell_check_text(paste(unique(words$token[words$is_word]), collapse = \"\\n\"))$word\n  words &lt;- words |&gt;\n    mutate(low_conf = confidence &lt; low_conf_cut,\n           misspelled = is_word & token %in% bad,\n           flagged = low_conf | misspelled)\n\n  pages &lt;- words |&gt;\n    summarise(.by = page_id, n_words = n(), mean_conf = mean(confidence),\n              pct_low = mean(low_conf), pct_flag = mean(flagged)) |&gt;\n    mutate(volume = str_sub(page_id, 1, 4), page = as.integer(str_sub(page_id, 7)),\n           tier = case_when(page_id %in% forced_manual ~ \"A_manual\",\n                            pct_flag &gt;= 0.25 | n_words &lt; 40 ~ \"A_manual\",\n                            pct_flag &gt;= 0.10 ~ \"B_proofread\",\n                            TRUE ~ \"C_spot_check\"),\n           reason = case_when(page_id %in% forced_manual ~ \"front matter or two-column layout\",\n                              n_words &lt; 40 ~ \"very few words (short or failed page)\",\n                              pct_flag &gt;= 0.25 ~ \"high share of low-confidence or non-dictionary words\",\n                              pct_flag &gt;= 0.10 ~ \"moderate share of flagged words\")) |&gt;\n    arrange(volume, page)\n\n  drafts &lt;- words |&gt; group_split(page_id) |&gt;\n    set_names(map_chr(group_split(words, page_id), \\(d) d$page_id[1])) |&gt;\n    map_chr(mark_text)\n  pages &lt;- pages |&gt;\n    mutate(text = map_chr(page_id, \\(id) str_trim(res[[id]]$text)),\n           text_marked = drafts[page_id])\n\n  dir.create(\"output\", showWarnings = FALSE)\n  write_csv(select(pages, page_id, volume, page, tier, reason, n_words, mean_conf, pct_low, pct_flag, text, text_marked),\n            \"output/pages.csv\")\n  write_csv(select(words, page_id, word, confidence, x0, y0, x1, y1, low_conf, misspelled, flagged),\n            \"output/ocr_words.csv\")\n\n  # Draft text per volume: tier A pages carry a banner, flagged words are [?word]\n  draft_files &lt;- map_chr(unique(pages$volume), \\(v) {\n    pg &lt;- filter(pages, volume == v)\n    txt &lt;- pmap_chr(pg, \\(page, tier, text_marked, ...) {\n      banner &lt;- if (tier == \"A_manual\") \"\\n*** MANUAL TRANSCRIPTION NEEDED: OCR unreliable ***\" else \"\"\n      sprintf(\"[p. %d]%s\\n%s\\n\", page, banner, text_marked)\n    })\n    path &lt;- file.path(\"output\", paste0(v, \"_draft.txt\"))\n    writeLines(txt, path)\n    path\n  })\n\n  # Review images: red boxes on flagged words, for tier A and B pages\n  dir.create(\"data/pages/review\", showWarnings = FALSE, recursive = TRUE)\n  review_files &lt;- pages |&gt; filter(tier != \"C_spot_check\") |&gt; pull(page_id) |&gt; map_chr(\\(id) {\n    w &lt;- filter(words, page_id == id, flagged)\n    img &lt;- image_read(file.path(\"data/pages\", paste0(id, \".png\")))\n    img &lt;- image_draw(img)\n    rect(w$x0 - 2, w$y0 - 2, w$x1 + 2, w$y1 + 2, border = \"red\", lwd = 2)\n    dev.off()\n    path &lt;- file.path(\"data/pages/review\", paste0(id, \".png\"))\n    image_write(image_resize(img, \"50%\"), path, format = \"png\")\n    path\n  })\n\n  # Manual queue: pages ranked by how much work they need\n  queue &lt;- pages |&gt;\n    filter(tier != \"C_spot_check\") |&gt;\n    mutate(n_flagged = round(pct_flag * n_words)) |&gt;\n    arrange(tier, desc(pct_flag)) |&gt;\n    select(page_id, tier, reason, n_words, n_flagged, pct_flag, mean_conf)\n  write_csv(queue, \"output/manual_queue.csv\")\n\n  c(\"output/pages.csv\", \"output/ocr_words.csv\", \"output/manual_queue.csv\", draft_files, review_files)\n}",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Quality Triage</span>"
     ]
@@ -104,7 +224,37 @@
     "href": "05-ocr-local.html",
     "title": "5  Local OCR",
     "section": "",
-    "text": "Tesseract with magick preprocessing for faded pages.",
+    "text": "5.1 Method\nEvery page is run through Tesseract in its automatic page-segmentation mode (psm 3) on a grayscale image. For each page the script saves the full text and a word table with confidence and bounding box. Results are cached one file per page, so an interrupted run resumes and nothing is recomputed unnecessarily.\nShow code\n# Page pipeline: PDF page -&gt; cropped 300 DPI PNG -&gt; tesseract OCR -&gt; word table\n# and page text, cached per page so a run can be stopped and resumed.\n#   data/pages/&lt;page_id&gt;.png        prepared page image\n#   data/interim/ocr/&lt;page_id&gt;.rds  list(text, words, langs)\nlibrary(tidyverse)\nlibrary(pdftools)\nlibrary(magick)\nlibrary(tesseract)\nsource(\"R/utils.R\")\nsource(\"R/crop_spread.R\")\n\ncfg &lt;- read_csv(\"data/volume_config.csv\", show_col_types = FALSE)\n\n\npage_ids &lt;- function(vol) {\n  row &lt;- filter(cfg, volume_id == vol)\n  tibble(volume_id = vol, file = row$file, page = seq_len(row$n_pages),\n         page_id = sprintf(\"%s_p%03d\", vol, page),\n         layout = row$layout, is_portrait = page %in% parse_pages(row$portrait_pages))\n}\n\n# Download any tesseract language data that volume_config.csv asks for and is\n# not installed. Stops if a language is still missing, so a run never silently\n# uses fewer languages than the config says.\nensure_languages &lt;- function(config) {\n  want &lt;- config$ocr_langs |&gt; str_split(\"\\\\+\") |&gt; unlist() |&gt; unique()\n  for (lang in setdiff(want, tesseract_info()$available)) {\n    message(\"Downloading tesseract language data: \", lang)\n    tesseract_download(lang, progress = FALSE)\n  }\n  missing &lt;- setdiff(want, tesseract_info()$available)\n  if (length(missing)) stop(\"Tesseract language data still missing: \", paste(missing, collapse = \", \"))\n  sort(want)\n}\n\nprepare_page &lt;- function(vol, page, force = FALSE) {\n  id &lt;- sprintf(\"%s_p%03d\", vol, page)\n  out &lt;- file.path(\"data/pages\", paste0(id, \".png\"))\n  if (!force && file.exists(out)) return(out)\n  row &lt;- filter(cfg, volume_id == vol)\n  pdf &lt;- file.path(\"data/raw_pdf\", row$file)\n  img &lt;- if (row$layout == \"spread\" && !(page %in% parse_pages(row$portrait_pages))) {\n    suppressWarnings(crop_text_half(pdf, page))\n  } else {\n    tmp &lt;- file.path(\"data/interim\", paste0(\"full_\", id, \".png\"))\n    suppressWarnings(pdf_convert(pdf, pages = page, dpi = 300, format = \"png\",\n                                 filenames = tmp, verbose = FALSE))\n    on.exit(unlink(tmp))\n    image_read(tmp)\n  }\n  dir.create(dirname(out), showWarnings = FALSE, recursive = TRUE)\n  image_write(img, out, format = \"png\")\n  out\n}\n\nocr_engine &lt;- function(langs = \"eng\", psm = 3) {\n  tesseract(langs, options = list(tessedit_pageseg_mode = as.character(psm)))\n}\n\n# A cached result is reused only if it was made with the same languages, so\n# changing ocr_langs in the config reruns the affected pages.\nocr_page &lt;- function(vol, page, langs = \"eng\", force = FALSE) {\n  id &lt;- sprintf(\"%s_p%03d\", vol, page)\n  cache &lt;- file.path(\"data/interim/ocr\", paste0(id, \".rds\"))\n  if (!force && file.exists(cache) && identical(readRDS(cache)$langs, langs)) {\n    return(invisible(cache))\n  }\n  png &lt;- prepare_page(vol, page, force = force)\n  img &lt;- image_read(png) |&gt; image_convert(colorspace = \"gray\")\n  raw &lt;- image_write(img, format = \"png\")\n  eng &lt;- ocr_engine(langs)\n  words &lt;- ocr_data(raw, engine = eng) |&gt;\n    mutate(page_id = id, .before = 1) |&gt;\n    separate_wider_delim(bbox, \",\", names = c(\"x0\", \"y0\", \"x1\", \"y1\")) |&gt;\n    mutate(across(x0:y1, as.integer))\n  text &lt;- ocr(raw, engine = eng)\n  dir.create(dirname(cache), showWarnings = FALSE, recursive = TRUE)\n  saveRDS(list(text = text, words = words, langs = langs), cache)\n  invisible(cache)\n}\nThe whole set of 378 pages runs in parallel across worker processes. With six workers it takes about 2.6 seconds per page, roughly 20 minutes in total. Pages already in the cache are skipped unless they were made with different languages. Languages come from data/volume_config.csv, and ensure_languages() installs any that are missing before the run starts.\nShow code\n# Run the page pipeline (prepare_page + ocr_page) for whole volumes in parallel.\n# Results are cached per page, so a rerun only processes pages that are missing\n# or were made with different languages (force = TRUE redoes everything).\n# About 2.6 s/page with 6 workers. Returns the paths of all cached results.\nsource(\"R/ocr_pipeline.R\")\nlibrary(parallel)\n\nrun_ocr &lt;- function(config, pdf_files = NULL, workers = 6, force = FALSE) {\n  jobs &lt;- map(config$volume_id, \\(v) {\n    # Languages come straight from the config; ensure_languages() has installed them\n    page_ids(v) |&gt; mutate(langs = filter(config, volume_id == v)$ocr_langs)\n  }) |&gt; list_rbind()\n\n  cl &lt;- makeCluster(workers)\n  on.exit(stopCluster(cl))\n  clusterEvalQ(cl, source(\"R/ocr_pipeline.R\"))\n  parLapplyLB(cl, seq_len(nrow(jobs)), \\(i, jobs, force) {\n    ocr_page(jobs$volume_id[i], jobs$page[i], langs = jobs$langs[i], force = force)\n  }, jobs = jobs, force = force) |&gt;\n    invisible()\n  file.path(\"data/interim/ocr\", paste0(jobs$page_id, \".rds\"))\n}",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Local OCR</span>"
+    ]
+  },
+  {
+    "objectID": "05-ocr-local.html#settings-that-were-tried",
+    "href": "05-ocr-local.html#settings-that-were-tried",
+    "title": "5  Local OCR",
+    "section": "5.2 Settings that were tried",
+    "text": "5.2 Settings that were tried\nTwo small experiments ran on the prepared page images, with the code below. Both are rerun by the pipeline and their results are saved in data/interim/experiments/, so the numbers in this chapter are regenerated, not typed in.\n\n\nShow code\n# Tuning experiments behind the choices described in the \"Local OCR\" chapter.\n# Both run on the prepared page images (data/pages/), so run the OCR step\n# first. Results are written to data/interim/experiments/ and read by the book.\nlibrary(tidyverse)\nlibrary(magick)\nlibrary(tesseract)\n\n# Ten pages that cover every layout: portrait singles, a TOC, spreads, a\n# faded-ribbon page and a two-column page\nsample_ids &lt;- c(\"vol1_p001\", \"vol1_p044\", \"vol1_p070\", \"vol2_p001\", \"vol2_p040\",\n                \"vol2_p120\", \"vol3_p002\", \"vol3_p020\", \"vol3_p066\", \"vol3_p087\")\n\nocr_stats &lt;- function(img, psm = 3) {\n  raw &lt;- image_write(image_convert(img, colorspace = \"gray\"), format = \"png\")\n  d &lt;- ocr_data(raw, engine = tesseract(\"eng\", options = list(tessedit_pageseg_mode = as.character(psm))))\n  tibble(words = nrow(d), mean_conf = mean(d$confidence), pct_below_80 = mean(d$confidence &lt; 80) * 100)\n}\n\n# Page-segmentation modes 3 (automatic), 4 (single column), 6 (single block)\ncompare_psm &lt;- function(ids = sample_ids, psms = c(3, 4, 6)) {\n  expand_grid(page_id = ids, psm = psms) |&gt;\n    mutate(stats = map2(page_id, psm, \\(id, m) ocr_stats(image_read(file.path(\"data/pages\", paste0(id, \".png\"))), m))) |&gt;\n    unnest(stats)\n}\n\n# Preprocessing variants on one page from each of three kinds of page\npreprocess_variants &lt;- list(\n  baseline = identity,\n  threshold = \\(img) img |&gt; image_convert(colorspace = \"gray\") |&gt;\n    image_threshold(\"white\", \"55%\") |&gt; image_threshold(\"black\", \"55%\"),\n  contrast = \\(img) image_contrast(img, sharpen = 1)\n)\n\ncompare_preprocessing &lt;- function(ids = c(\"vol1_p010\", \"vol2_p040\", \"vol3_p020\")) {\n  expand_grid(page_id = ids, variant = names(preprocess_variants)) |&gt;\n    mutate(stats = map2(page_id, variant, \\(id, v) {\n      img &lt;- image_read(file.path(\"data/pages\", paste0(id, \".png\")))\n      ocr_stats(preprocess_variants[[v]](img))\n    })) |&gt;\n    unnest(stats)\n}\n\nrun_experiments &lt;- function(ocr_files = NULL, dir = \"data/interim/experiments\") {\n  dir.create(dir, showWarnings = FALSE, recursive = TRUE)\n  paths &lt;- c(psm = file.path(dir, \"psm_comparison.csv\"),\n             preprocessing = file.path(dir, \"preprocessing_comparison.csv\"))\n  write_csv(compare_psm(), paths[[\"psm\"]])\n  write_csv(compare_preprocessing(), paths[[\"preprocessing\"]])\n  unname(paths)\n}\n\n\n\n5.2.1 Page-segmentation mode\nTen pages covering every layout were run under three Tesseract page-segmentation modes: psm 3 (automatic), psm 4 (single column) and psm 6 (single block).\n\n\nShow code\npsm &lt;- read_csv(\"data/interim/experiments/psm_comparison.csv\", show_col_types = FALSE)\npsm |&gt;\n  summarise(.by = psm, mean_conf = mean(mean_conf), words_per_page = mean(words),\n            pct_below_80 = mean(pct_below_80)) |&gt;\n  kable(digits = 1)\n\n\n\n\nTable 5.1: Mean word confidence and word count by mode, averaged over the ten sample pages.\n\n\n\n\n\n\npsm\nmean_conf\nwords_per_page\npct_below_80\n\n\n\n\n3\n86.5\n403.9\n13.8\n\n\n4\n86.5\n401.8\n13.7\n\n\n6\n84.8\n420.8\n16.2\n\n\n\n\n\n\n\n\n\n\nShow code\npsm |&gt;\n  select(page_id, psm, mean_conf) |&gt;\n  pivot_wider(names_from = psm, names_prefix = \"psm \", values_from = mean_conf) |&gt;\n  kable(digits = 1)\n\n\n\n\nTable 5.2: Mean word confidence for each sample page under each mode.\n\n\n\n\n\n\npage_id\npsm 3\npsm 4\npsm 6\n\n\n\n\nvol1_p001\n91.4\n92.0\n89.7\n\n\nvol1_p044\n90.5\n90.4\n86.8\n\n\nvol1_p070\n94.1\n94.1\n93.5\n\n\nvol2_p001\n28.7\n29.0\n30.7\n\n\nvol2_p040\n93.0\n93.0\n92.3\n\n\nvol2_p120\n94.8\n94.6\n94.3\n\n\nvol3_p002\n93.2\n93.3\n93.5\n\n\nvol3_p020\n93.5\n93.7\n93.5\n\n\nvol3_p066\n94.4\n94.2\n93.2\n\n\nvol3_p087\n91.1\n90.6\n80.4\n\n\n\n\n\n\n\n\nOn ordinary pages the three modes are within a point or two of each other. The difference appears on the two-column page (vol3_p087): psm 6 reads across both columns as one block and scores about ten points lower with more words, which is the signature of merged columns. psm 3 was used for the full pass as a reasonable default. Mean confidence is only a proxy for accuracy, so this is not a proven best.\n\n\n5.2.2 Preprocessing\nHard thresholding (pure black and white) and a contrast boost were compared with the unprocessed image on one page from each of three volumes.\n\n\nShow code\nread_csv(\"data/interim/experiments/preprocessing_comparison.csv\", show_col_types = FALSE) |&gt;\n  select(page_id, variant, words, mean_conf) |&gt;\n  pivot_wider(names_from = variant, values_from = c(words, mean_conf)) |&gt;\n  kable(digits = 1)\n\n\n\n\nTable 5.3: Effect of preprocessing on mean word confidence.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npage_id\nwords_baseline\nwords_threshold\nwords_contrast\nmean_conf_baseline\nmean_conf_threshold\nmean_conf_contrast\n\n\n\n\nvol1_p010\n399\n321\n384\n66.0\n65.3\n66.1\n\n\nvol2_p040\n624\n518\n625\n93.0\n32.9\n92.0\n\n\nvol3_p020\n303\n302\n301\n93.5\n94.1\n94.0\n\n\n\n\n\n\n\n\nThresholding is not a safe improvement. It leaves the faded-ribbon page (vol1_p010) about where it was and cuts the word count, and it drops a clean page (vol2_p040) from 93 to about 33. Contrast changes little either way. No preprocessing is applied.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Local OCR</span>"
+    ]
+  },
+  {
+    "objectID": "05-ocr-local.html#what-is-still-unknown",
+    "href": "05-ocr-local.html#what-is-still-unknown",
+    "title": "5  Local OCR",
+    "section": "5.3 What is still unknown",
+    "text": "5.3 What is still unknown\nThe choice of mode, preprocessing and languages should be made by comparing OCR output with hand-typed text and computing the character error rate. No such reference pages exist yet. When they do, the comparison should cover each layout: clean portrait, spread, faded ribbon, two-column and front matter.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Local OCR</span>"
+    ]
+  },
+  {
+    "objectID": "05-ocr-local.html#languages",
+    "href": "05-ocr-local.html#languages",
+    "title": "5  Local OCR",
+    "section": "5.4 Languages",
+    "text": "5.4 Languages\nThe first pass used English only. The 1966 journal has German, French and Dutch names, which English-only OCR tends to garble. The config asks for eng+deu+fra for volume 2, and the pipeline installs the missing models and redoes the pages whose cached result used different languages. Rerun before reviewing volume 2: saved corrections replace the OCR text for their page, so a later rerun would not improve pages already corrected.",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>Local OCR</span>"
     ]
@@ -114,7 +264,37 @@
     "href": "06-ocr-llm-fallback.html",
     "title": "6  Vision-Model Fallback",
     "section": "",
-    "text": "Model comparison against hand-typed ground truth, cost, and caching.",
+    "text": "6.1 Intended design\nTesseract struggles with some pages: front matter with dotted leaders, dark two-column newsletter pages, and the worn-ribbon section of volume 1. A vision language model, which reads the image directly, may do better on those. The plan is to try it only on the tier A pages, not the whole set.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Vision-Model Fallback</span>"
+    ]
+  },
+  {
+    "objectID": "06-ocr-llm-fallback.html#intended-design",
+    "href": "06-ocr-llm-fallback.html#intended-design",
+    "title": "6  Vision-Model Fallback",
+    "section": "",
+    "text": "Scope. Tier A pages, starting with the 1966 front matter (table of contents, itinerary, mail schedule), the two vol3 newsletter pages and the faded vol1 pages.\nInterface. The ellmer package, so the provider can be swapped.\nOutput. Plain text for ordinary pages and Markdown tables for the schedules, saved next to the tesseract result with the engine recorded.\nCaching. Every response is stored per page, so reruns never pay twice.\nReview. Model output goes through the same proofreading app. A model transcription is a better starting draft, not a final text.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Vision-Model Fallback</span>"
+    ]
+  },
+  {
+    "objectID": "06-ocr-llm-fallback.html#comparison-before-committing",
+    "href": "06-ocr-llm-fallback.html#comparison-before-committing",
+    "title": "6  Vision-Model Fallback",
+    "section": "6.2 Comparison before committing",
+    "text": "6.2 Comparison before committing\nModels differ in accuracy and cost. Before using one at scale, two or three providers should transcribe the same ten hand-typed pages. The comparison reports character error rate and cost per page, and the cheaper model wins unless it is clearly less accurate. The model identifiers will be chosen at that point, because the available versions change quickly.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Vision-Model Fallback</span>"
+    ]
+  },
+  {
+    "objectID": "06-ocr-llm-fallback.html#questions-the-owner-may-want-to-weigh",
+    "href": "06-ocr-llm-fallback.html#questions-the-owner-may-want-to-weigh",
+    "title": "6  Vision-Model Fallback",
+    "section": "6.3 Questions the owner may want to weigh",
+    "text": "6.3 Questions the owner may want to weigh\nSending page images to an outside service shares the journal text with that provider. The owner has cleared the material for publication, but should confirm that is acceptable for the chosen provider’s terms.",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Vision-Model Fallback</span>"
     ]
@@ -124,7 +304,67 @@
     "href": "07-proofreading.html",
     "title": "7  Proofreading",
     "section": "",
-    "text": "Low-confidence flags, custom dictionary, and side-by-side review.",
+    "text": "7.1 Using the app\nThe proofreading step turns OCR drafts into checked text. It is a small Shiny app that shows the page scan beside an editable text box.\nFrom the project root:\nA page saved unchanged is recorded as confirmed, so a page checked and found correct counts as done.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Proofreading</span>"
+    ]
+  },
+  {
+    "objectID": "07-proofreading.html#using-the-app",
+    "href": "07-proofreading.html#using-the-app",
+    "title": "7  Proofreading",
+    "section": "",
+    "text": "source(\"R/proofread.R\")\nrun_proofread()\n\nLeft: the page image, either with flagged words boxed in red (half size) or the clean full-resolution crop. A slider zooms.\nRight: the text, starting from the OCR draft. A [?word] mark means the OCR was unsure of that word. Retype it without the mark.\nSidebar: filters for tier (tiers A and B by default), volume and status (all, to do, done), plus the page list with Previous and Next.\nSaving: Save, or Save and next. Edits are also saved automatically when you change page. A badge above the box shows unsaved changes, and the browser warns before the tab is closed with unsaved edits. A page you only view is not recorded.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Proofreading</span>"
+    ]
+  },
+  {
+    "objectID": "07-proofreading.html#the-corrections-file",
+    "href": "07-proofreading.html#the-corrections-file",
+    "title": "7  Proofreading",
+    "section": "7.2 The corrections file",
+    "text": "7.2 The corrections file\nEvery save writes one row to data/corrections.csv. The file is committed, so the full history of human changes lives in version control.\n\n\n\n\n\n\n\nColumn\nMeaning\n\n\n\n\npage_id\nFor example vol1_p016. One row per page; the latest save wins\n\n\nstatus\nedited (text differs from the OCR draft) or confirmed (checked, unchanged)\n\n\ncorrected_text\nThe full page text as saved, including any [?word] marks left unresolved\n\n\nsaved_at\nTimestamp\n\n\n\nThe file is written to a temporary name and then renamed, so a crash cannot leave a half-written file.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Proofreading</span>"
+    ]
+  },
+  {
+    "objectID": "07-proofreading.html#merging-corrections",
+    "href": "07-proofreading.html#merging-corrections",
+    "title": "7  Proofreading",
+    "section": "7.3 Merging corrections",
+    "text": "7.3 Merging corrections\napply_corrections() joins the corrections to the page table. A corrected page replaces the OCR draft; every other page keeps it. The result has final_text and a source column (edited, confirmed or ocr_draft), so any page can be traced to where its text came from. Marks left in the text stay visible, so unresolved words are never hidden.\nCorrections work at page level. If a page is later re-OCR’d with better settings, its old correction still takes priority.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Proofreading</span>"
+    ]
+  },
+  {
+    "objectID": "07-proofreading.html#progress",
+    "href": "07-proofreading.html#progress",
+    "title": "7  Proofreading",
+    "section": "7.4 Progress",
+    "text": "7.4 Progress\n\n\nShow code\nfinal &lt;- apply_corrections()\nfinal |&gt;\n  count(tier, source) |&gt;\n  pivot_wider(names_from = source, values_from = n, values_fill = 0) |&gt;\n  kable()\n\n\n\n\nTable 7.1: Review progress by tier, as of the last time this chapter was rendered.\n\n\n\n\n\n\ntier\nocr_draft\nedited\n\n\n\n\nA_manual\n36\n0\n\n\nB_proofread\n68\n1\n\n\nC_spot_check\n273\n0",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Proofreading</span>"
+    ]
+  },
+  {
+    "objectID": "07-proofreading.html#code",
+    "href": "07-proofreading.html#code",
+    "title": "7  Proofreading",
+    "section": "7.5 Code",
+    "text": "7.5 Code\n\n\nShow code\n# Launch the proofreading app from the project root.\n# Requires output/pages.csv (run R/build_outputs.R first).\nrun_proofread &lt;- function(root = getwd()) {\n  stopifnot(file.exists(file.path(root, \"output\", \"pages.csv\")))\n  options(pomeroy.root = normalizePath(root))\n  shiny::runApp(file.path(root, \"proofread\"), launch.browser = TRUE)\n}\n\n# Apply data/corrections.csv to the OCR text: one final text per page.\n# Corrected pages replace the draft; everything else keeps the OCR draft.\n# Leftover [?word] marks stay visible so unresolved words are never hidden.\napply_corrections &lt;- function(pages = readr::read_csv(\"output/pages.csv\", show_col_types = FALSE),\n                              corr_path = \"data/corrections.csv\") {\n  corr &lt;- if (file.exists(corr_path)) {\n    readr::read_csv(corr_path, col_types = \"cccc\", show_col_types = FALSE)\n  } else {\n    tibble::tibble(page_id = character(), status = character(),\n                   corrected_text = character(), saved_at = character())\n  }\n  pages |&gt;\n    dplyr::left_join(dplyr::select(corr, page_id, status, corrected_text), by = \"page_id\") |&gt;\n    dplyr::mutate(final_text = dplyr::coalesce(corrected_text, text_marked),\n                  source = dplyr::coalesce(status, \"ocr_draft\")) |&gt;\n    dplyr::select(-corrected_text, -status)\n}\n\n\nThe app itself:\n\n\nShow code\n# Proofreading app: scan image beside editable OCR text.\n# Launch with run_proofread() from R/proofread.R (sets the project root).\n# Saves to data/corrections.csv, one row per page (latest save wins).\n# Edits are auto-saved when you leave a page; pages you only view are not recorded.\nlibrary(shiny)\nlibrary(bslib)\nlibrary(readr)\nlibrary(dplyr)\nlibrary(stringr)\n\nroot &lt;- getOption(\"pomeroy.root\", normalizePath(\"..\"))\ncorr_path &lt;- file.path(root, \"data\", \"corrections.csv\")\naddResourcePath(\"scan\", file.path(root, \"data\", \"pages\"))\naddResourcePath(\"review\", file.path(root, \"data\", \"pages\", \"review\"))\n\npages &lt;- read_csv(file.path(root, \"output\", \"pages.csv\"), show_col_types = FALSE) |&gt;\n  mutate(text_marked = coalesce(text_marked, \"\"),\n         tier_short = str_sub(tier, 1, 1))\n\nempty_corr &lt;- tibble(page_id = character(), status = character(),\n                     corrected_text = character(), saved_at = character())\n\nread_corr &lt;- function() {\n  if (!file.exists(corr_path)) return(empty_corr)\n  read_csv(corr_path, col_types = \"cccc\", show_col_types = FALSE)\n}\n\nwrite_corr &lt;- function(x) {\n  # Write then rename so a crash cannot leave a half-written file\n  tmp &lt;- paste0(corr_path, \".tmp\")\n  write_csv(x, tmp)\n  file.rename(tmp, corr_path)\n}\n\n# Warn the browser before closing the tab while there are unsaved edits\ndirty_js &lt;- \"\nShiny.addCustomMessageHandler('dirty', function(isDirty) {\n  window.onbeforeunload = isDirty ? function(e) { e.preventDefault(); e.returnValue = ''; return ''; } : null;\n});\"\n\nui &lt;- page_sidebar(\n  title = \"Pomeroy journals: proofreading\",\n  tags$head(tags$script(HTML(dirty_js))),\n  sidebar = sidebar(\n    width = 300,\n    checkboxGroupInput(\"tiers\", \"Tier\",\n      c(\"A: manual typing\" = \"A\", \"B: proofread\" = \"B\", \"C: spot check\" = \"C\"),\n      selected = c(\"A\", \"B\")),\n    checkboxGroupInput(\"vols\", \"Volume\",\n      sort(unique(pages$volume)), selected = sort(unique(pages$volume)), inline = TRUE),\n    radioButtons(\"status\", \"Status\", c(\"All\" = \"all\", \"To do\" = \"todo\", \"Done\" = \"done\"),\n                 inline = TRUE),\n    selectInput(\"page\", \"Page\", choices = NULL),\n    layout_columns(\n      actionButton(\"prev\", \"Previous\"),\n      actionButton(\"nxt\", \"Next\")\n    ),\n    hr(),\n    radioButtons(\"img_type\", \"Image\",\n      c(\"Flagged words boxed (half size)\" = \"review\", \"Clean (full resolution)\" = \"scan\")),\n    sliderInput(\"zoom\", \"Zoom (%)\", 50, 250, 100, step = 10),\n    hr(),\n    textOutput(\"progress\")\n  ),\n  layout_columns(\n    col_widths = c(6, 6),\n    card(card_header(textOutput(\"img_title\")), full_screen = TRUE,\n         div(style = \"overflow:auto; height:78vh;\", uiOutput(\"scan_img\"))),\n    card(card_header(\"Text\", uiOutput(\"dirty_badge\", inline = TRUE)),\n         textAreaInput(\"txt\", NULL, value = \"\", width = \"100%\", rows = 28),\n         tags$style(\"#txt {font-family: monospace; font-size: 15px;}\"),\n         layout_columns(\n           actionButton(\"save\", \"Save\", class = \"btn-primary\"),\n           actionButton(\"save_next\", \"Save and next\", class = \"btn-success\"),\n           actionButton(\"reset\", \"Reset to OCR draft\")\n         ),\n         textOutput(\"msg\"))\n  )\n)\n\nserver &lt;- function(input, output, session) {\n  corr &lt;- reactiveVal(read_corr())\n  current &lt;- reactiveVal(NULL)\n  # Text as last loaded or saved; differs from the box when there are unsaved edits\n  loaded &lt;- reactiveVal(\"\")\n\n  draft_for &lt;- function(id) pages$text_marked[pages$page_id == id]\n\n  visible &lt;- reactive({\n    done_ids &lt;- corr()$page_id\n    keep &lt;- pages |&gt;\n      filter(tier_short %in% input$tiers, volume %in% input$vols)\n    if (input$status == \"todo\") keep &lt;- filter(keep, !page_id %in% done_ids)\n    if (input$status == \"done\") keep &lt;- filter(keep, page_id %in% done_ids)\n    keep\n  })\n\n  is_dirty &lt;- reactive(!is.null(current()) && !identical(input$txt, loaded()))\n\n  # Save text for a given page and record it as the new baseline if it is the open page\n  save_page &lt;- function(id, text, note = \"Saved\") {\n    new &lt;- tibble(page_id = id,\n                  status = if (identical(text, draft_for(id))) \"confirmed\" else \"edited\",\n                  corrected_text = text,\n                  saved_at = format(Sys.time(), \"%Y-%m-%d %H:%M:%S\"))\n    updated &lt;- isolate(corr()) |&gt; filter(page_id != id) |&gt; bind_rows(new) |&gt; arrange(page_id)\n    write_corr(updated)\n    corr(updated)\n    output$msg &lt;- renderText(sprintf(\"%s %s (%s) at %s\", note, id, new$status, new$saved_at))\n  }\n\n  # Keep the page dropdown in sync with filters and the current page\n  observe({\n    v &lt;- visible()\n    done_ids &lt;- corr()$page_id\n    lab &lt;- sprintf(\"%s p%d [%s]%s\", v$volume, v$page, v$tier_short,\n                   if_else(v$page_id %in% done_ids, \" done\", \"\"))\n    sel &lt;- isolate(current())\n    if (is.null(sel) || !sel %in% v$page_id) sel &lt;- v$page_id[1]\n    updateSelectInput(session, \"page\", choices = setNames(v$page_id, lab), selected = sel)\n  })\n\n  # Leaving a page with unsaved edits saves them first\n  observeEvent(input$page, {\n    req(input$page)\n    old &lt;- current()\n    if (!is.null(old) && old != input$page && !identical(input$txt, loaded())) {\n      save_page(old, input$txt, note = \"Auto-saved\")\n    }\n    current(input$page)\n    saved &lt;- filter(corr(), page_id == input$page)\n    start &lt;- if (nrow(saved)) saved$corrected_text[1] else draft_for(input$page)\n    loaded(start)\n    updateTextAreaInput(session, \"txt\", value = start)\n  })\n\n  step &lt;- function(by) {\n    ids &lt;- visible()$page_id\n    i &lt;- match(current(), ids)\n    if (!is.na(i) && i + by &gt;= 1 && i + by &lt;= length(ids)) {\n      updateSelectInput(session, \"page\", selected = ids[i + by])\n    }\n  }\n  observeEvent(input$prev, step(-1))\n  observeEvent(input$nxt, step(1))\n\n  observeEvent(input$save, {\n    req(current())\n    save_page(current(), input$txt)\n    loaded(input$txt)\n  })\n\n  observeEvent(input$save_next, {\n    req(current())\n    ids &lt;- visible()$page_id\n    i &lt;- match(current(), ids)\n    save_page(current(), input$txt)\n    loaded(input$txt)\n    if (!is.na(i) && i &lt; length(ids)) updateSelectInput(session, \"page\", selected = ids[i + 1])\n  })\n\n  observeEvent(input$reset, {\n    updateTextAreaInput(session, \"txt\", value = draft_for(current()))\n  })\n\n  observe(session$sendCustomMessage(\"dirty\", isTRUE(is_dirty())))\n\n  output$dirty_badge &lt;- renderUI({\n    if (isTRUE(is_dirty())) {\n      span(class = \"badge text-bg-warning ms-2\", \"Unsaved changes (saved automatically when you change page)\")\n    } else {\n      span(class = \"badge text-bg-secondary ms-2\", \"No unsaved changes\")\n    }\n  })\n\n  output$img_title &lt;- renderText({\n    req(current())\n    r &lt;- pages[pages$page_id == current(), ]\n    sprintf(\"%s, page %d | tier %s | mean confidence %.0f%% | %s\",\n            r$volume, r$page, r$tier_short, r$mean_conf, coalesce(r$reason, \"no flag\"))\n  })\n\n  output$scan_img &lt;- renderUI({\n    req(current())\n    use_review &lt;- input$img_type == \"review\" &&\n      file.exists(file.path(root, \"data\", \"pages\", \"review\", paste0(current(), \".png\")))\n    src &lt;- sprintf(\"%s/%s.png\", if (use_review) \"review\" else \"scan\", current())\n    # Fixed display width regardless of file size, so zoom behaves the same for both\n    tags$img(src = src, style = sprintf(\"width:%dpx; max-width:none;\", round(10 * input$zoom)))\n  })\n\n  output$progress &lt;- renderText({\n    v &lt;- pages |&gt; filter(tier_short %in% c(\"A\", \"B\"))\n    sprintf(\"Tier A/B pages saved: %d of %d\", sum(corr()$page_id %in% v$page_id), nrow(v))\n  })\n}\n\nshinyApp(ui, server)",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Proofreading</span>"
+    ]
+  },
+  {
+    "objectID": "07-proofreading.html#not-yet-done",
+    "href": "07-proofreading.html#not-yet-done",
+    "title": "7  Proofreading",
+    "section": "7.6 Not yet done",
+    "text": "7.6 Not yet done\nA custom dictionary of names and places would reduce false flags. A fix recorded for one word is not yet applied to the same word elsewhere; each page is corrected on its own.",
     "crumbs": [
       "<span class='chapter-number'>7</span>  <span class='chapter-title'>Proofreading</span>"
     ]
@@ -134,7 +374,27 @@
     "href": "08-assembly.html",
     "title": "8  Assembly and Downloads",
     "section": "",
-    "text": "DOCX, searchable PDF, and per-page CSV.",
+    "text": "8.1 Planned outputs\nAssembly combines the final text for every page into the files readers will use. All of them come from one table, the output of apply_corrections() (see Proofreading).\nEach document is built in its own run. The 1966 Europe journal gets its own DOCX, PDF and CSV, separate from the two WWII volumes.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Assembly and Downloads</span>"
+    ]
+  },
+  {
+    "objectID": "08-assembly.html#planned-outputs",
+    "href": "08-assembly.html#planned-outputs",
+    "title": "8  Assembly and Downloads",
+    "section": "",
+    "text": "Output\nContents\n\n\n\n\nPer-page CSV\nVolume, page, final text, tier, source (edited, confirmed, ocr_draft), mean confidence\n\n\nDOCX\nOne file per document with a title page, page markers and readable body style\n\n\nSearchable PDF\nNot decided: the original scans with an invisible text layer, a typeset transcription, or both\n\n\nBook chapters\nOne per volume, generated from the same table",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Assembly and Downloads</span>"
+    ]
+  },
+  {
+    "objectID": "08-assembly.html#open-decisions",
+    "href": "08-assembly.html#open-decisions",
+    "title": "8  Assembly and Downloads",
+    "section": "8.2 Open decisions",
+    "text": "8.2 Open decisions\n\nWhich searchable PDF to offer. A text layer over the original scans preserves the look of the typescript but is large; a typeset version is small and easy to read.\nPDF engine for the book (LaTeX or Typst).\nWhether pages still marked as unreviewed OCR drafts should be published, or held back until checked. The source column makes either choice easy to apply.\n\nDownload links will be added to the preface and to this chapter once the files exist.",
     "crumbs": [
       "<span class='chapter-number'>8</span>  <span class='chapter-title'>Assembly and Downloads</span>"
     ]
@@ -144,7 +404,7 @@
     "href": "09-vol1.html",
     "title": "9  WWII Journal, Volume 1",
     "section": "",
-    "text": "Transcription pending. Source file: vol1.pdf.",
+    "text": "Source file: vol1.pdf. The WWII volume number is not yet confirmed.\n\n\nShow code\nvolume_status(final) |&gt; filter(volume == vol) |&gt; kable()\n\n\n\n\nTable 9.1: Review status of this volume.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nvolume\npages\ntier_A\ntier_B\ntier_C\nedited\nconfirmed\nocr_draft_only\n\n\n\n\nvol1\n102\n20\n15\n67\n1\n0\n101\n\n\n\n\n\n\n\n\nThe text below is published only after review. Until then the chunk is switched off. To publish, change eval: false to eval: true in the chunk and render. Pages that still show ocr_draft in the status table are unreviewed OCR, and [?word] marks flag words that were not resolved.\n\nShow code\ncat(volume_markdown(final, vol))",
     "crumbs": [
       "WWII Journals",
       "<span class='chapter-number'>9</span>  <span class='chapter-title'>WWII Journal, Volume 1</span>"
@@ -155,7 +415,7 @@
     "href": "10-vol3.html",
     "title": "10  WWII Journal, Volume 3",
     "section": "",
-    "text": "Transcription pending. Source file: vol3.pdf. Volume numbering is unconfirmed.",
+    "text": "Source file: vol3.pdf. The WWII volume number is not yet confirmed. Pages 87 and 88 are dark, two-column newsletter pages and need manual transcription.\n\n\nShow code\nvolume_status(final) |&gt; filter(volume == vol) |&gt; kable()\n\n\n\n\nTable 10.1: Review status of this volume.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nvolume\npages\ntier_A\ntier_B\ntier_C\nedited\nconfirmed\nocr_draft_only\n\n\n\n\nvol3\n88\n2\n6\n80\n0\n0\n88\n\n\n\n\n\n\n\n\nThe text below is published only after review. Until then the chunk is switched off. To publish, change eval: false to eval: true in the chunk and render. Pages that still show ocr_draft in the status table are unreviewed OCR, and [?word] marks flag words that were not resolved.\n\nShow code\ncat(volume_markdown(final, vol))",
     "crumbs": [
       "WWII Journals",
       "<span class='chapter-number'>10</span>  <span class='chapter-title'>WWII Journal, Volume 3</span>"
@@ -166,7 +426,7 @@
     "href": "11-europe-1966.html",
     "title": "11  Europe Journal, 1966",
     "section": "",
-    "text": "Transcription pending. Source file: vol2.pdf. This is a separate document from the WWII journals and is processed in its own run.",
+    "text": "Source file: vol2.pdf. This is a separate document from the WWII journals and is processed in its own run. Pages 1 to 6 are front matter (a three-page table of contents, an itinerary and a mail schedule); entries begin on page 7 with the entry for Friday, 24 June 1966. The text includes German, French and Dutch names.\n\n\nShow code\nvolume_status(final) |&gt; filter(volume == vol) |&gt; kable()\n\n\n\n\nTable 11.1: Review status of this document.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nvolume\npages\ntier_A\ntier_B\ntier_C\nedited\nconfirmed\nocr_draft_only\n\n\n\n\nvol2\n188\n14\n48\n126\n0\n0\n188\n\n\n\n\n\n\n\n\nThe text below is published only after review. Until then the chunk is switched off. To publish, change eval: false to eval: true in the chunk and render. Pages that still show ocr_draft in the status table are unreviewed OCR, and [?word] marks flag words that were not resolved.\n\nShow code\ncat(volume_markdown(final, vol))",
     "crumbs": [
       "Europe Journal, 1966",
       "<span class='chapter-number'>11</span>  <span class='chapter-title'>Europe Journal, 1966</span>"

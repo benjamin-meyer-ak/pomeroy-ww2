@@ -1,3 +1,29 @@
 # WWII Journal, Volume 3
 
-Transcription pending. Source file: `vol3.pdf`. Volume numbering is unconfirmed.
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(knitr)
+source("R/proofread.R")
+source("R/book_helpers.R")
+final <- apply_corrections()
+vol <- "vol3"
+```
+
+Source file: `vol3.pdf`. The WWII volume number is not yet confirmed. Pages 87 and 88 are dark, two-column newsletter pages and need manual transcription.
+
+```{r}
+#| label: tbl-status
+#| tbl-cap: "Review status of this volume."
+volume_status(final) |> filter(volume == vol) |> kable()
+```
+
+The text below is published only after review. Until then the chunk is switched off. To publish, change `eval: false` to `eval: true` in the chunk and render. Pages that still show `ocr_draft` in the status table are unreviewed OCR, and `[?word]` marks flag words that were not resolved.
+
+```{r}
+#| label: transcription
+#| eval: false
+#| results: asis
+cat(volume_markdown(final, vol))
+```

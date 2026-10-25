@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -141,7 +175,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02-setup.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setup</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setup and Reproducing the Work</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -231,8 +265,19 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#using-the-app" id="toc-using-the-app" class="nav-link active" data-scroll-target="#using-the-app"><span class="header-section-number">7.1</span> Using the app</a></li>
+  <li><a href="#the-corrections-file" id="toc-the-corrections-file" class="nav-link" data-scroll-target="#the-corrections-file"><span class="header-section-number">7.2</span> The corrections file</a></li>
+  <li><a href="#merging-corrections" id="toc-merging-corrections" class="nav-link" data-scroll-target="#merging-corrections"><span class="header-section-number">7.3</span> Merging corrections</a></li>
+  <li><a href="#progress" id="toc-progress" class="nav-link" data-scroll-target="#progress"><span class="header-section-number">7.4</span> Progress</a></li>
+  <li><a href="#code" id="toc-code" class="nav-link" data-scroll-target="#code"><span class="header-section-number">7.5</span> Code</a></li>
+  <li><a href="#not-yet-done" id="toc-not-yet-done" class="nav-link" data-scroll-target="#not-yet-done"><span class="header-section-number">7.6</span> Not yet done</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -256,9 +301,353 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Low-confidence flags, custom dictionary, and side-by-side review.</p>
+<p>The proofreading step turns OCR drafts into checked text. It is a small Shiny app that shows the page scan beside an editable text box.</p>
+<section id="using-the-app" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="using-the-app"><span class="header-section-number">7.1</span> Using the app</h2>
+<p>From the project root:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/proofread.R"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">run_proofread</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><strong>Left:</strong> the page image, either with flagged words boxed in red (half size) or the clean full-resolution crop. A slider zooms.</li>
+<li><strong>Right:</strong> the text, starting from the OCR draft. A <code>[?word]</code> mark means the OCR was unsure of that word. Retype it without the mark.</li>
+<li><strong>Sidebar:</strong> filters for tier (tiers A and B by default), volume and status (all, to do, done), plus the page list with Previous and Next.</li>
+<li><strong>Saving:</strong> Save, or Save and next. Edits are also saved automatically when you change page. A badge above the box shows unsaved changes, and the browser warns before the tab is closed with unsaved edits. A page you only view is not recorded.</li>
+</ul>
+<p>A page saved unchanged is recorded as <code>confirmed</code>, so a page checked and found correct counts as done.</p>
+</section>
+<section id="the-corrections-file" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="the-corrections-file"><span class="header-section-number">7.2</span> The corrections file</h2>
+<p>Every save writes one row to <code>data/corrections.csv</code>. The file is committed, so the full history of human changes lives in version control.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>page_id</code></td>
+<td>For example <code>vol1_p016</code>. One row per page; the latest save wins</td>
+</tr>
+<tr class="even">
+<td><code>status</code></td>
+<td><code>edited</code> (text differs from the OCR draft) or <code>confirmed</code> (checked, unchanged)</td>
+</tr>
+<tr class="odd">
+<td><code>corrected_text</code></td>
+<td>The full page text as saved, including any <code>[?word]</code> marks left unresolved</td>
+</tr>
+<tr class="even">
+<td><code>saved_at</code></td>
+<td>Timestamp</td>
+</tr>
+</tbody>
+</table>
+<p>The file is written to a temporary name and then renamed, so a crash cannot leave a half-written file.</p>
+</section>
+<section id="merging-corrections" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="merging-corrections"><span class="header-section-number">7.3</span> Merging corrections</h2>
+<p><code>apply_corrections()</code> joins the corrections to the page table. A corrected page replaces the OCR draft; every other page keeps it. The result has <code>final_text</code> and a <code>source</code> column (<code>edited</code>, <code>confirmed</code> or <code>ocr_draft</code>), so any page can be traced to where its text came from. Marks left in the text stay visible, so unresolved words are never hidden.</p>
+<p>Corrections work at page level. If a page is later re-OCR’d with better settings, its old correction still takes priority.</p>
+</section>
+<section id="progress" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="progress"><span class="header-section-number">7.4</span> Progress</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>final <span class="ot">&lt;-</span> <span class="fu">apply_corrections</span>()</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>final <span class="sc">|&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(tier, source) <span class="sc">|&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> source, <span class="at">values_from =</span> n, <span class="at">values_fill =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-progress" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;7.1: Review progress by tier, as of the last time this chapter was rendered.
+</figcaption>
+<div aria-describedby="tbl-progress-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">tier</th>
+<th style="text-align: right;">ocr_draft</th>
+<th style="text-align: right;">edited</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A_manual</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B_proofread</td>
+<td style="text-align: right;">68</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C_spot_check</td>
+<td style="text-align: right;">273</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</section>
+<section id="code" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="code"><span class="header-section-number">7.5</span> Code</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Launch the proofreading app from the project root.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Requires output/pages.csv (run R/build_outputs.R first).</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>run_proofread <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">root =</span> <span class="fu">getwd</span>()) {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">file.exists</span>(<span class="fu">file.path</span>(root, <span class="st">"output"</span>, <span class="st">"pages.csv"</span>)))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">options</span>(<span class="at">pomeroy.root =</span> <span class="fu">normalizePath</span>(root))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  shiny<span class="sc">::</span><span class="fu">runApp</span>(<span class="fu">file.path</span>(root, <span class="st">"proofread"</span>), <span class="at">launch.browser =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply data/corrections.csv to the OCR text: one final text per page.</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Corrected pages replace the draft; everything else keeps the OCR draft.</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Leftover [?word] marks stay visible so unresolved words are never hidden.</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>apply_corrections <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">pages =</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"output/pages.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                              <span class="at">corr_path =</span> <span class="st">"data/corrections.csv"</span>) {</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  corr <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">file.exists</span>(corr_path)) {</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    readr<span class="sc">::</span><span class="fu">read_csv</span>(corr_path, <span class="at">col_types =</span> <span class="st">"cccc"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">page_id =</span> <span class="fu">character</span>(), <span class="at">status =</span> <span class="fu">character</span>(),</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                   <span class="at">corrected_text =</span> <span class="fu">character</span>(), <span class="at">saved_at =</span> <span class="fu">character</span>())</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  pages <span class="sc">|&gt;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">left_join</span>(dplyr<span class="sc">::</span><span class="fu">select</span>(corr, page_id, status, corrected_text), <span class="at">by =</span> <span class="st">"page_id"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">final_text =</span> dplyr<span class="sc">::</span><span class="fu">coalesce</span>(corrected_text, text_marked),</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>                  <span class="at">source =</span> dplyr<span class="sc">::</span><span class="fu">coalesce</span>(status, <span class="st">"ocr_draft"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>corrected_text, <span class="sc">-</span>status)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The app itself:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Proofreading app: scan image beside editable OCR text.</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Launch with run_proofread() from R/proofread.R (sets the project root).</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Saves to data/corrections.csv, one row per page (latest save wins).</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Edits are auto-saved when you leave a page; pages you only view are not recorded.</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bslib)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>root <span class="ot">&lt;-</span> <span class="fu">getOption</span>(<span class="st">"pomeroy.root"</span>, <span class="fu">normalizePath</span>(<span class="st">".."</span>))</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>corr_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(root, <span class="st">"data"</span>, <span class="st">"corrections.csv"</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">addResourcePath</span>(<span class="st">"scan"</span>, <span class="fu">file.path</span>(root, <span class="st">"data"</span>, <span class="st">"pages"</span>))</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="fu">addResourcePath</span>(<span class="st">"review"</span>, <span class="fu">file.path</span>(root, <span class="st">"data"</span>, <span class="st">"pages"</span>, <span class="st">"review"</span>))</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>pages <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(root, <span class="st">"output"</span>, <span class="st">"pages.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text_marked =</span> <span class="fu">coalesce</span>(text_marked, <span class="st">""</span>),</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>         <span class="at">tier_short =</span> <span class="fu">str_sub</span>(tier, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>empty_corr <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">page_id =</span> <span class="fu">character</span>(), <span class="at">status =</span> <span class="fu">character</span>(),</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>                     <span class="at">corrected_text =</span> <span class="fu">character</span>(), <span class="at">saved_at =</span> <span class="fu">character</span>())</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>read_corr <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(corr_path)) <span class="fu">return</span>(empty_corr)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_csv</span>(corr_path, <span class="at">col_types =</span> <span class="st">"cccc"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>write_corr <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Write then rename so a crash cannot leave a half-written file</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  tmp <span class="ot">&lt;-</span> <span class="fu">paste0</span>(corr_path, <span class="st">".tmp"</span>)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(x, tmp)</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.rename</span>(tmp, corr_path)</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Warn the browser before closing the tab while there are unsaved edits</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>dirty_js <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="st">Shiny.addCustomMessageHandler('dirty', function(isDirty) {</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="st">  window.onbeforeunload = isDirty ? function(e) { e.preventDefault(); e.returnValue = ''; return ''; } : null;</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="st">});"</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">page_sidebar</span>(</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Pomeroy journals: proofreading"</span>,</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>  tags<span class="sc">$</span><span class="fu">head</span>(tags<span class="sc">$</span><span class="fu">script</span>(<span class="fu">HTML</span>(dirty_js))),</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">sidebar =</span> <span class="fu">sidebar</span>(</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">300</span>,</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">checkboxGroupInput</span>(<span class="st">"tiers"</span>, <span class="st">"Tier"</span>,</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>      <span class="fu">c</span>(<span class="st">"A: manual typing"</span> <span class="ot">=</span> <span class="st">"A"</span>, <span class="st">"B: proofread"</span> <span class="ot">=</span> <span class="st">"B"</span>, <span class="st">"C: spot check"</span> <span class="ot">=</span> <span class="st">"C"</span>),</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">selected =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>)),</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">checkboxGroupInput</span>(<span class="st">"vols"</span>, <span class="st">"Volume"</span>,</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sort</span>(<span class="fu">unique</span>(pages<span class="sc">$</span>volume)), <span class="at">selected =</span> <span class="fu">sort</span>(<span class="fu">unique</span>(pages<span class="sc">$</span>volume)), <span class="at">inline =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">radioButtons</span>(<span class="st">"status"</span>, <span class="st">"Status"</span>, <span class="fu">c</span>(<span class="st">"All"</span> <span class="ot">=</span> <span class="st">"all"</span>, <span class="st">"To do"</span> <span class="ot">=</span> <span class="st">"todo"</span>, <span class="st">"Done"</span> <span class="ot">=</span> <span class="st">"done"</span>),</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>                 <span class="at">inline =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">selectInput</span>(<span class="st">"page"</span>, <span class="st">"Page"</span>, <span class="at">choices =</span> <span class="cn">NULL</span>),</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layout_columns</span>(</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>      <span class="fu">actionButton</span>(<span class="st">"prev"</span>, <span class="st">"Previous"</span>),</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>      <span class="fu">actionButton</span>(<span class="st">"nxt"</span>, <span class="st">"Next"</span>)</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hr</span>(),</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">radioButtons</span>(<span class="st">"img_type"</span>, <span class="st">"Image"</span>,</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>      <span class="fu">c</span>(<span class="st">"Flagged words boxed (half size)"</span> <span class="ot">=</span> <span class="st">"review"</span>, <span class="st">"Clean (full resolution)"</span> <span class="ot">=</span> <span class="st">"scan"</span>)),</span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sliderInput</span>(<span class="st">"zoom"</span>, <span class="st">"Zoom (%)"</span>, <span class="dv">50</span>, <span class="dv">250</span>, <span class="dv">100</span>, <span class="at">step =</span> <span class="dv">10</span>),</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hr</span>(),</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>    <span class="fu">textOutput</span>(<span class="st">"progress"</span>)</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layout_columns</span>(</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_widths =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">6</span>),</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>    <span class="fu">card</span>(<span class="fu">card_header</span>(<span class="fu">textOutput</span>(<span class="st">"img_title"</span>)), <span class="at">full_screen =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>         <span class="fu">div</span>(<span class="at">style =</span> <span class="st">"overflow:auto; height:78vh;"</span>, <span class="fu">uiOutput</span>(<span class="st">"scan_img"</span>))),</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>    <span class="fu">card</span>(<span class="fu">card_header</span>(<span class="st">"Text"</span>, <span class="fu">uiOutput</span>(<span class="st">"dirty_badge"</span>, <span class="at">inline =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>         <span class="fu">textAreaInput</span>(<span class="st">"txt"</span>, <span class="cn">NULL</span>, <span class="at">value =</span> <span class="st">""</span>, <span class="at">width =</span> <span class="st">"100%"</span>, <span class="at">rows =</span> <span class="dv">28</span>),</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>         tags<span class="sc">$</span><span class="fu">style</span>(<span class="st">"#txt {font-family: monospace; font-size: 15px;}"</span>),</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>         <span class="fu">layout_columns</span>(</span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>           <span class="fu">actionButton</span>(<span class="st">"save"</span>, <span class="st">"Save"</span>, <span class="at">class =</span> <span class="st">"btn-primary"</span>),</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>           <span class="fu">actionButton</span>(<span class="st">"save_next"</span>, <span class="st">"Save and next"</span>, <span class="at">class =</span> <span class="st">"btn-success"</span>),</span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>           <span class="fu">actionButton</span>(<span class="st">"reset"</span>, <span class="st">"Reset to OCR draft"</span>)</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>         ),</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>         <span class="fu">textOutput</span>(<span class="st">"msg"</span>))</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>  corr <span class="ot">&lt;-</span> <span class="fu">reactiveVal</span>(<span class="fu">read_corr</span>())</span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>  current <span class="ot">&lt;-</span> <span class="fu">reactiveVal</span>(<span class="cn">NULL</span>)</span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Text as last loaded or saved; differs from the box when there are unsaved edits</span></span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>  loaded <span class="ot">&lt;-</span> <span class="fu">reactiveVal</span>(<span class="st">""</span>)</span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>  draft_for <span class="ot">&lt;-</span> <span class="cf">function</span>(id) pages<span class="sc">$</span>text_marked[pages<span class="sc">$</span>page_id <span class="sc">==</span> id]</span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>  visible <span class="ot">&lt;-</span> <span class="fu">reactive</span>({</span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>    done_ids <span class="ot">&lt;-</span> <span class="fu">corr</span>()<span class="sc">$</span>page_id</span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>    keep <span class="ot">&lt;-</span> pages <span class="sc">|&gt;</span></span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(tier_short <span class="sc">%in%</span> input<span class="sc">$</span>tiers, volume <span class="sc">%in%</span> input<span class="sc">$</span>vols)</span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (input<span class="sc">$</span>status <span class="sc">==</span> <span class="st">"todo"</span>) keep <span class="ot">&lt;-</span> <span class="fu">filter</span>(keep, <span class="sc">!</span>page_id <span class="sc">%in%</span> done_ids)</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (input<span class="sc">$</span>status <span class="sc">==</span> <span class="st">"done"</span>) keep <span class="ot">&lt;-</span> <span class="fu">filter</span>(keep, page_id <span class="sc">%in%</span> done_ids)</span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>    keep</span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>  is_dirty <span class="ot">&lt;-</span> <span class="fu">reactive</span>(<span class="sc">!</span><span class="fu">is.null</span>(<span class="fu">current</span>()) <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">identical</span>(input<span class="sc">$</span>txt, <span class="fu">loaded</span>()))</span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Save text for a given page and record it as the new baseline if it is the open page</span></span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>  save_page <span class="ot">&lt;-</span> <span class="cf">function</span>(id, text, <span class="at">note =</span> <span class="st">"Saved"</span>) {</span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>    new <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">page_id =</span> id,</span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>                  <span class="at">status =</span> <span class="cf">if</span> (<span class="fu">identical</span>(text, <span class="fu">draft_for</span>(id))) <span class="st">"confirmed"</span> <span class="cf">else</span> <span class="st">"edited"</span>,</span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>                  <span class="at">corrected_text =</span> text,</span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>                  <span class="at">saved_at =</span> <span class="fu">format</span>(<span class="fu">Sys.time</span>(), <span class="st">"%Y-%m-%d %H:%M:%S"</span>))</span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>    updated <span class="ot">&lt;-</span> <span class="fu">isolate</span>(<span class="fu">corr</span>()) <span class="sc">|&gt;</span> <span class="fu">filter</span>(page_id <span class="sc">!=</span> id) <span class="sc">|&gt;</span> <span class="fu">bind_rows</span>(new) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(page_id)</span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>    <span class="fu">write_corr</span>(updated)</span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>    <span class="fu">corr</span>(updated)</span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>msg <span class="ot">&lt;-</span> <span class="fu">renderText</span>(<span class="fu">sprintf</span>(<span class="st">"%s %s (%s) at %s"</span>, note, id, new<span class="sc">$</span>status, new<span class="sc">$</span>saved_at))</span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Keep the page dropdown in sync with filters and the current page</span></span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observe</span>({</span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>    v <span class="ot">&lt;-</span> <span class="fu">visible</span>()</span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>    done_ids <span class="ot">&lt;-</span> <span class="fu">corr</span>()<span class="sc">$</span>page_id</span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>    lab <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"%s p%d [%s]%s"</span>, v<span class="sc">$</span>volume, v<span class="sc">$</span>page, v<span class="sc">$</span>tier_short,</span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">if_else</span>(v<span class="sc">$</span>page_id <span class="sc">%in%</span> done_ids, <span class="st">" done"</span>, <span class="st">""</span>))</span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>    sel <span class="ot">&lt;-</span> <span class="fu">isolate</span>(<span class="fu">current</span>())</span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.null</span>(sel) <span class="sc">||</span> <span class="sc">!</span>sel <span class="sc">%in%</span> v<span class="sc">$</span>page_id) sel <span class="ot">&lt;-</span> v<span class="sc">$</span>page_id[<span class="dv">1</span>]</span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a>    <span class="fu">updateSelectInput</span>(session, <span class="st">"page"</span>, <span class="at">choices =</span> <span class="fu">setNames</span>(v<span class="sc">$</span>page_id, lab), <span class="at">selected =</span> sel)</span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Leaving a page with unsaved edits saves them first</span></span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observeEvent</span>(input<span class="sc">$</span>page, {</span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(input<span class="sc">$</span>page)</span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>    old <span class="ot">&lt;-</span> <span class="fu">current</span>()</span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(old) <span class="sc">&amp;&amp;</span> old <span class="sc">!=</span> input<span class="sc">$</span>page <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">identical</span>(input<span class="sc">$</span>txt, <span class="fu">loaded</span>())) {</span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a>      <span class="fu">save_page</span>(old, input<span class="sc">$</span>txt, <span class="at">note =</span> <span class="st">"Auto-saved"</span>)</span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a>    <span class="fu">current</span>(input<span class="sc">$</span>page)</span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a>    saved <span class="ot">&lt;-</span> <span class="fu">filter</span>(<span class="fu">corr</span>(), page_id <span class="sc">==</span> input<span class="sc">$</span>page)</span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a>    start <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">nrow</span>(saved)) saved<span class="sc">$</span>corrected_text[<span class="dv">1</span>] <span class="cf">else</span> <span class="fu">draft_for</span>(input<span class="sc">$</span>page)</span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a>    <span class="fu">loaded</span>(start)</span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a>    <span class="fu">updateTextAreaInput</span>(session, <span class="st">"txt"</span>, <span class="at">value =</span> start)</span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a>  step <span class="ot">&lt;-</span> <span class="cf">function</span>(by) {</span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a>    ids <span class="ot">&lt;-</span> <span class="fu">visible</span>()<span class="sc">$</span>page_id</span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> <span class="fu">match</span>(<span class="fu">current</span>(), ids)</span>
+<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(i) <span class="sc">&amp;&amp;</span> i <span class="sc">+</span> by <span class="sc">&gt;=</span> <span class="dv">1</span> <span class="sc">&amp;&amp;</span> i <span class="sc">+</span> by <span class="sc">&lt;=</span> <span class="fu">length</span>(ids)) {</span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a>      <span class="fu">updateSelectInput</span>(session, <span class="st">"page"</span>, <span class="at">selected =</span> ids[i <span class="sc">+</span> by])</span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observeEvent</span>(input<span class="sc">$</span>prev, <span class="fu">step</span>(<span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observeEvent</span>(input<span class="sc">$</span>nxt, <span class="fu">step</span>(<span class="dv">1</span>))</span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observeEvent</span>(input<span class="sc">$</span>save, {</span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">current</span>())</span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a>    <span class="fu">save_page</span>(<span class="fu">current</span>(), input<span class="sc">$</span>txt)</span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a>    <span class="fu">loaded</span>(input<span class="sc">$</span>txt)</span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observeEvent</span>(input<span class="sc">$</span>save_next, {</span>
+<span id="cb4-154"><a href="#cb4-154" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">current</span>())</span>
+<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a>    ids <span class="ot">&lt;-</span> <span class="fu">visible</span>()<span class="sc">$</span>page_id</span>
+<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> <span class="fu">match</span>(<span class="fu">current</span>(), ids)</span>
+<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a>    <span class="fu">save_page</span>(<span class="fu">current</span>(), input<span class="sc">$</span>txt)</span>
+<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a>    <span class="fu">loaded</span>(input<span class="sc">$</span>txt)</span>
+<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(i) <span class="sc">&amp;&amp;</span> i <span class="sc">&lt;</span> <span class="fu">length</span>(ids)) <span class="fu">updateSelectInput</span>(session, <span class="st">"page"</span>, <span class="at">selected =</span> ids[i <span class="sc">+</span> <span class="dv">1</span>])</span>
+<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observeEvent</span>(input<span class="sc">$</span>reset, {</span>
+<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a>    <span class="fu">updateTextAreaInput</span>(session, <span class="st">"txt"</span>, <span class="at">value =</span> <span class="fu">draft_for</span>(<span class="fu">current</span>()))</span>
+<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observe</span>(session<span class="sc">$</span><span class="fu">sendCustomMessage</span>(<span class="st">"dirty"</span>, <span class="fu">isTRUE</span>(<span class="fu">is_dirty</span>())))</span>
+<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>dirty_badge <span class="ot">&lt;-</span> <span class="fu">renderUI</span>({</span>
+<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">isTRUE</span>(<span class="fu">is_dirty</span>())) {</span>
+<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a>      <span class="fu">span</span>(<span class="at">class =</span> <span class="st">"badge text-bg-warning ms-2"</span>, <span class="st">"Unsaved changes (saved automatically when you change page)"</span>)</span>
+<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a>      <span class="fu">span</span>(<span class="at">class =</span> <span class="st">"badge text-bg-secondary ms-2"</span>, <span class="st">"No unsaved changes"</span>)</span>
+<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>img_title <span class="ot">&lt;-</span> <span class="fu">renderText</span>({</span>
+<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">current</span>())</span>
+<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a>    r <span class="ot">&lt;-</span> pages[pages<span class="sc">$</span>page_id <span class="sc">==</span> <span class="fu">current</span>(), ]</span>
+<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">"%s, page %d | tier %s | mean confidence %.0f%% | %s"</span>,</span>
+<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a>            r<span class="sc">$</span>volume, r<span class="sc">$</span>page, r<span class="sc">$</span>tier_short, r<span class="sc">$</span>mean_conf, <span class="fu">coalesce</span>(r<span class="sc">$</span>reason, <span class="st">"no flag"</span>))</span>
+<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb4-182"><a href="#cb4-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-183"><a href="#cb4-183" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>scan_img <span class="ot">&lt;-</span> <span class="fu">renderUI</span>({</span>
+<span id="cb4-184"><a href="#cb4-184" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(<span class="fu">current</span>())</span>
+<span id="cb4-185"><a href="#cb4-185" aria-hidden="true" tabindex="-1"></a>    use_review <span class="ot">&lt;-</span> input<span class="sc">$</span>img_type <span class="sc">==</span> <span class="st">"review"</span> <span class="sc">&amp;&amp;</span></span>
+<span id="cb4-186"><a href="#cb4-186" aria-hidden="true" tabindex="-1"></a>      <span class="fu">file.exists</span>(<span class="fu">file.path</span>(root, <span class="st">"data"</span>, <span class="st">"pages"</span>, <span class="st">"review"</span>, <span class="fu">paste0</span>(<span class="fu">current</span>(), <span class="st">".png"</span>)))</span>
+<span id="cb4-187"><a href="#cb4-187" aria-hidden="true" tabindex="-1"></a>    src <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"%s/%s.png"</span>, <span class="cf">if</span> (use_review) <span class="st">"review"</span> <span class="cf">else</span> <span class="st">"scan"</span>, <span class="fu">current</span>())</span>
+<span id="cb4-188"><a href="#cb4-188" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fixed display width regardless of file size, so zoom behaves the same for both</span></span>
+<span id="cb4-189"><a href="#cb4-189" aria-hidden="true" tabindex="-1"></a>    tags<span class="sc">$</span><span class="fu">img</span>(<span class="at">src =</span> src, <span class="at">style =</span> <span class="fu">sprintf</span>(<span class="st">"width:%dpx; max-width:none;"</span>, <span class="fu">round</span>(<span class="dv">10</span> <span class="sc">*</span> input<span class="sc">$</span>zoom)))</span>
+<span id="cb4-190"><a href="#cb4-190" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb4-191"><a href="#cb4-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-192"><a href="#cb4-192" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>progress <span class="ot">&lt;-</span> <span class="fu">renderText</span>({</span>
+<span id="cb4-193"><a href="#cb4-193" aria-hidden="true" tabindex="-1"></a>    v <span class="ot">&lt;-</span> pages <span class="sc">|&gt;</span> <span class="fu">filter</span>(tier_short <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>))</span>
+<span id="cb4-194"><a href="#cb4-194" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sprintf</span>(<span class="st">"Tier A/B pages saved: %d of %d"</span>, <span class="fu">sum</span>(<span class="fu">corr</span>()<span class="sc">$</span>page_id <span class="sc">%in%</span> v<span class="sc">$</span>page_id), <span class="fu">nrow</span>(v))</span>
+<span id="cb4-195"><a href="#cb4-195" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb4-196"><a href="#cb4-196" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-197"><a href="#cb4-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-198"><a href="#cb4-198" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(ui, server)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="not-yet-done" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="not-yet-done"><span class="header-section-number">7.6</span> Not yet done</h2>
+<p>A custom dictionary of names and places would reduce false flags. A fix recorded for one word is not yet applied to the same word elsewhere; each page is corrected on its own.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

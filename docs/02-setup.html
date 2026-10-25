@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2&nbsp; Setup – Pomeroy WWII Journals: An OCR Transcription Pipeline</title>
+<title>2&nbsp; Setup and Reproducing the Work – Pomeroy WWII Journals: An OCR Transcription Pipeline</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -68,6 +102,9 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 </head>
@@ -81,7 +118,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-setup.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setup</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-setup.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setup and Reproducing the Work</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -141,7 +178,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02-setup.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setup</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setup and Reproducing the Work</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -236,9 +273,12 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#packages-and-renv" id="toc-packages-and-renv" class="nav-link active" data-scroll-target="#packages-and-renv"><span class="header-section-number">2.1</span> Packages and renv</a></li>
-  <li><a href="#tesseract" id="toc-tesseract" class="nav-link" data-scroll-target="#tesseract"><span class="header-section-number">2.2</span> Tesseract</a></li>
-  <li><a href="#api-keys" id="toc-api-keys" class="nav-link" data-scroll-target="#api-keys"><span class="header-section-number">2.3</span> API keys</a></li>
+  <li><a href="#rebuilding-from-scratch" id="toc-rebuilding-from-scratch" class="nav-link active" data-scroll-target="#rebuilding-from-scratch"><span class="header-section-number">2.1</span> Rebuilding from scratch</a></li>
+  <li><a href="#system-requirements" id="toc-system-requirements" class="nav-link" data-scroll-target="#system-requirements"><span class="header-section-number">2.2</span> System requirements</a></li>
+  <li><a href="#package-versions" id="toc-package-versions" class="nav-link" data-scroll-target="#package-versions"><span class="header-section-number">2.3</span> Package versions</a></li>
+  <li><a href="#the-settings-file" id="toc-the-settings-file" class="nav-link" data-scroll-target="#the-settings-file"><span class="header-section-number">2.4</span> The settings file</a></li>
+  <li><a href="#keys" id="toc-keys" class="nav-link" data-scroll-target="#keys"><span class="header-section-number">2.5</span> Keys</a></li>
+  <li><a href="#project-layout" id="toc-project-layout" class="nav-link" data-scroll-target="#project-layout"><span class="header-section-number">2.6</span> Project layout</a></li>
   </ul>
 </nav>
     </div>
@@ -247,7 +287,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setup</span></h1>
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setup and Reproducing the Work</span></h1>
 </div>
 
 
@@ -264,14 +304,448 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="packages-and-renv" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="packages-and-renv"><span class="header-section-number">2.1</span> Packages and renv</h2>
+<p>This chapter says what is needed to rebuild the transcription from the scanned PDFs, and shows the file that runs every step in order. Every script the project uses is shown in full in the chapter for its step. The only things not generated by code are the three scans, the settings file <code>data/volume_config.csv</code> (described below) and the human corrections in <code>data/corrections.csv</code>.</p>
+<section id="rebuilding-from-scratch" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="rebuilding-from-scratch"><span class="header-section-number">2.1</span> Rebuilding from scratch</h2>
+<p>With the three PDFs saved as <code>data/raw_pdf/vol1.pdf</code>, <code>vol2.pdf</code> and <code>vol3.pdf</code>:</p>
+<ol type="1">
+<li>Open the RStudio project (or set the working directory to the project root).</li>
+<li>Restore the package versions recorded in <code>renv.lock</code>: <code>renv::restore(lockfile = "renv.lock")</code>.</li>
+<li>Run the whole pipeline: <code>targets::tar_make()</code>.</li>
+<li>Render the book: <code>quarto render</code>.</li>
+</ol>
+<p>Step 3 is the single entry point. It profiles every page, downloads any missing Tesseract language data, crops and OCRs all 378 pages, builds the triage tables, runs the settings experiments and applies the corrections. It takes roughly 30 minutes on a six-core machine (about 4 minutes for the inventory, 20 for OCR, the rest for tiering and experiments). Steps whose inputs have not changed are skipped on a rerun, and OCR results are cached page by page, so an interrupted run resumes where it stopped.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The whole pipeline, from the scanned PDFs to the final tables. Run with</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   targets::tar_make()</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Steps whose inputs have not changed are skipped; OCR results are also cached</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># page by page in data/interim/ocr/, so an interrupted run resumes.</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(targets)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">tar_source</span>(<span class="st">"R"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tar_option_set</span>(<span class="at">packages =</span> <span class="fu">c</span>(<span class="st">"tidyverse"</span>, <span class="st">"pdftools"</span>, <span class="st">"magick"</span>, <span class="st">"tesseract"</span>))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Inputs: per-volume settings and the scans</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(config_file, <span class="st">"data/volume_config.csv"</span>, <span class="at">format =</span> <span class="st">"file"</span>),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(config, <span class="fu">read_csv</span>(config_file, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(pdf_files, <span class="fu">file.path</span>(<span class="st">"data/raw_pdf"</span>, config<span class="sc">$</span>file), <span class="at">format =</span> <span class="st">"file"</span>),</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 1: profile every page (blank, duplicate and layout checks)</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(inventory_file, <span class="fu">run_inventory</span>(config, pdf_files), <span class="at">format =</span> <span class="st">"file"</span>),</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 2: crop, render and OCR every page</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(languages, <span class="fu">ensure_languages</span>(config)),</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(ocr_files, <span class="fu">run_ocr</span>(config, pdf_files, languages), <span class="at">format =</span> <span class="st">"file"</span>),</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 3: tiers, draft text, review images, manual queue</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(output_files, <span class="fu">build_outputs</span>(config, ocr_files), <span class="at">format =</span> <span class="st">"file"</span>),</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 4: settings experiments reported in the book</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(experiment_files, <span class="fu">run_experiments</span>(ocr_files), <span class="at">format =</span> <span class="st">"file"</span>),</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step 5: final text = OCR draft with the human corrections applied</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(corrections_file, <span class="st">"data/corrections.csv"</span>, <span class="at">format =</span> <span class="st">"file"</span>),</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(final, {</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    output_files</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">apply_corrections</span>(<span class="at">corr_path =</span> corrections_file)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell" data-layout-align="default">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  config[volume_config.csv] --&gt; inv[Inventory]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  pdf[Scanned PDFs] --&gt; inv</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  config --&gt; lang[Install languages]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  lang --&gt; ocr[Crop and OCR every page]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  pdf --&gt; ocr</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  ocr --&gt; out[Tiers, drafts, review images]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  ocr --&gt; exp[Settings experiments]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  out --&gt; final[Final text]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  corr[corrections.csv] --&gt; final</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+  config[volume_config.csv] --&gt; inv[Inventory]
+  pdf[Scanned PDFs] --&gt; inv
+  config --&gt; lang[Install languages]
+  lang --&gt; ocr[Crop and OCR every page]
+  pdf --&gt; ocr
+  ocr --&gt; out[Tiers, drafts, review images]
+  ocr --&gt; exp[Settings experiments]
+  out --&gt; final[Final text]
+  corr[corrections.csv] --&gt; final
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>Two checks were made that a rerun gives the same answer. Re-running the inventory from scratch reproduced the earlier ink measurements exactly. Re-cropping and re-OCRing three pages from three different files gave identical text, word boxes and confidences (apart from floating-point noise of about 1e-14).</p>
 </section>
-<section id="tesseract" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="tesseract"><span class="header-section-number">2.2</span> Tesseract</h2>
+<section id="system-requirements" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="system-requirements"><span class="header-section-number">2.2</span> System requirements</h2>
+<p>The R packages bundle their own copies of the native libraries, so no separate installs are needed on Windows:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Component</th>
+<th>Provided by</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>PDF rendering (poppler)</td>
+<td><code>pdftools</code></td>
+</tr>
+<tr class="even">
+<td>Image processing (ImageMagick)</td>
+<td><code>magick</code></td>
+</tr>
+<tr class="odd">
+<td>OCR engine (Tesseract) and the English model</td>
+<td><code>tesseract</code></td>
+</tr>
+<tr class="even">
+<td>Other language models (<code>deu</code>, <code>fra</code>)</td>
+<td>downloaded by the pipeline with <code>tesseract_download()</code></td>
+</tr>
+</tbody>
+</table>
+<p>The language models are the one thing fetched from the internet during a run. Tesseract’s results can differ slightly between engine and model versions, so the versions below are part of the record.</p>
 </section>
-<section id="api-keys" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="api-keys"><span class="header-section-number">2.3</span> API keys</h2>
+<section id="package-versions" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="package-versions"><span class="header-section-number">2.3</span> Package versions</h2>
+<p>Exact versions are pinned in <code>renv.lock</code>. The ones that matter most for the output:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tribble</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>package, <span class="sc">~</span>used_for,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"pdftools"</span>, <span class="st">"Render PDF pages to images and read page sizes"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"magick"</span>, <span class="st">"Crop, convert and annotate page images"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tesseract"</span>, <span class="st">"Local OCR with word-level confidence"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"spelling"</span>, <span class="st">"Dictionary check used to flag unfamiliar words"</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"targets"</span>, <span class="st">"Runs the pipeline and skips finished steps"</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tidyverse"</span>, <span class="st">"Data handling and plots"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"shiny"</span>, <span class="st">"Proofreading app"</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"bslib"</span>, <span class="st">"Proofreading app layout"</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ellmer"</span>, <span class="st">"Vision-model calls (planned, not yet used)"</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">version =</span> <span class="fu">map_chr</span>(package, \(p) <span class="fu">as.character</span>(<span class="fu">packageVersion</span>(p)))) <span class="sc">|&gt;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-packages" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-packages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.1: Main packages and the versions that built this book.
+</figcaption>
+<div aria-describedby="tbl-packages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">package</th>
+<th style="text-align: left;">used_for</th>
+<th style="text-align: left;">version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">pdftools</td>
+<td style="text-align: left;">Render PDF pages to images and read page sizes</td>
+<td style="text-align: left;">3.9.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">magick</td>
+<td style="text-align: left;">Crop, convert and annotate page images</td>
+<td style="text-align: left;">2.9.1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">tesseract</td>
+<td style="text-align: left;">Local OCR with word-level confidence</td>
+<td style="text-align: left;">5.3.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">spelling</td>
+<td style="text-align: left;">Dictionary check used to flag unfamiliar words</td>
+<td style="text-align: left;">2.3.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">targets</td>
+<td style="text-align: left;">Runs the pipeline and skips finished steps</td>
+<td style="text-align: left;">1.12.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">tidyverse</td>
+<td style="text-align: left;">Data handling and plots</td>
+<td style="text-align: left;">2.0.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">shiny</td>
+<td style="text-align: left;">Proofreading app</td>
+<td style="text-align: left;">1.14.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">bslib</td>
+<td style="text-align: left;">Proofreading app layout</td>
+<td style="text-align: left;">0.12.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ellmer</td>
+<td style="text-align: left;">Vision-model calls (planned, not yet used)</td>
+<td style="text-align: left;">0.5.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Tesseract engine version 5.3.2. Languages installed on the machine that built this book: eng, osd. The 1966 journal is configured for <code>eng+deu+fra</code>, so the pipeline downloads <code>deu</code> and <code>fra</code> the first time it runs on a machine that lacks them, and re-OCRs volume 2 if it was previously processed with fewer languages.</p>
+</section>
+<section id="the-settings-file" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="the-settings-file"><span class="header-section-number">2.4</span> The settings file</h2>
+<p>Everything that differs between volumes lives in one table, <code>data/volume_config.csv</code>. The pipeline reads it; nothing about a particular volume is written into the scripts.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="st">"data/volume_config.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>notes) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-config" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-config-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.2: data/volume_config.csv.
+</figcaption>
+<div aria-describedby="tbl-config-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 10%">
+<col style="width: 9%">
+<col style="width: 8%">
+<col style="width: 10%">
+<col style="width: 15%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">volume_id</th>
+<th style="text-align: left;">file</th>
+<th style="text-align: left;">document</th>
+<th style="text-align: right;">n_pages</th>
+<th style="text-align: left;">layout</th>
+<th style="text-align: left;">text_side</th>
+<th style="text-align: left;">portrait_pages</th>
+<th style="text-align: left;">front_matter_pages</th>
+<th style="text-align: right;">first_entry_page</th>
+<th style="text-align: left;">check_pages</th>
+<th style="text-align: left;">force_manual_pages</th>
+<th style="text-align: left;">duplicate_pairs</th>
+<th style="text-align: left;">ocr_langs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">vol1</td>
+<td style="text-align: left;">vol1.pdf</td>
+<td style="text-align: left;">wwii</td>
+<td style="text-align: right;">102</td>
+<td style="text-align: left;">spread</td>
+<td style="text-align: left;">right</td>
+<td style="text-align: left;">1;44-46</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">38-54;69</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">77=78;96=97;vol1:102=vol3:1</td>
+<td style="text-align: left;">eng</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">vol3</td>
+<td style="text-align: left;">vol3.pdf</td>
+<td style="text-align: left;">wwii</td>
+<td style="text-align: right;">88</td>
+<td style="text-align: left;">spread</td>
+<td style="text-align: left;">right</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">36;87-88</td>
+<td style="text-align: left;">87-88</td>
+<td style="text-align: left;">vol3:1=vol1:102</td>
+<td style="text-align: left;">eng</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">vol2</td>
+<td style="text-align: left;">vol2.pdf</td>
+<td style="text-align: left;">europe1966</td>
+<td style="text-align: right;">188</td>
+<td style="text-align: left;">page</td>
+<td style="text-align: left;">full</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">1-6</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">3;4;27;116;158</td>
+<td style="text-align: left;">1-6</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">eng+deu+fra</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The file is written by hand, from the inventory (see <a href="./03-extraction.html">Page Extraction</a>) and from looking at the scans. It is the record of those judgments:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Meaning and source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>layout</code>, <code>text_side</code></td>
+<td><code>spread</code> or <code>page</code>; which half of a spread holds the text. From the inventory’s page shapes and ink on each half.</td>
+</tr>
+<tr class="even">
+<td><code>portrait_pages</code></td>
+<td>Pages in a spread file that are single pages and are not cropped. From the inventory’s orientation column.</td>
+</tr>
+<tr class="odd">
+<td><code>front_matter_pages</code>, <code>first_entry_page</code></td>
+<td>Read from the scans (vol2 only so far).</td>
+</tr>
+<tr class="even">
+<td><code>check_pages</code></td>
+<td>Pages worth a second look because the inventory flagged them. Informational.</td>
+</tr>
+<tr class="odd">
+<td><code>force_manual_pages</code></td>
+<td>Pages sent straight to tier A because OCR is known to fail on their layout.</td>
+</tr>
+<tr class="even">
+<td><code>duplicate_pairs</code></td>
+<td>Pages that look repeated, from the inventory’s duplicate check. Informational: none is dropped.</td>
+</tr>
+<tr class="odd">
+<td><code>ocr_langs</code></td>
+<td>Tesseract languages, joined with <code>+</code>.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="keys" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="keys"><span class="header-section-number">2.5</span> Keys</h2>
+<p>Vision-model transcription is planned but not used so far. When it is added, API keys will be read from environment variables set in <code>.Renviron</code>, which is excluded from version control.</p>
+</section>
+<section id="project-layout" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="project-layout"><span class="header-section-number">2.6</span> Project layout</h2>
+<p>Scans and page images stay on the local machine. Everything else is committed, including the cached OCR, so the book can be rebuilt without redoing the 20-minute OCR step.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Path</th>
+<th>Contents</th>
+<th>In git</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>data/raw_pdf/</code></td>
+<td>The three scanned PDFs</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td><code>data/pages/</code></td>
+<td>300 DPI page PNGs and review images</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td><code>data/interim/</code></td>
+<td>Page inventory, cached OCR results, experiment results</td>
+<td>Yes</td>
+</tr>
+<tr class="even">
+<td><code>data/volume_config.csv</code></td>
+<td>Per-volume settings</td>
+<td>Yes</td>
+</tr>
+<tr class="odd">
+<td><code>data/corrections.csv</code></td>
+<td>Human fixes from the proofreading app</td>
+<td>Yes</td>
+</tr>
+<tr class="even">
+<td><code>output/</code></td>
+<td>Page table, word table, drafts, downloads</td>
+<td>Yes</td>
+</tr>
+<tr class="odd">
+<td><code>R/</code></td>
+<td>Pipeline code</td>
+<td>Yes</td>
+</tr>
+<tr class="even">
+<td><code>_targets.R</code></td>
+<td>The pipeline definition</td>
+<td>Yes</td>
+</tr>
+<tr class="odd">
+<td><code>renv.lock</code></td>
+<td>Pinned package versions</td>
+<td>Yes</td>
+</tr>
+<tr class="even">
+<td><code>_targets/</code></td>
+<td>The <code>targets</code> cache</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td><code>proofread/</code></td>
+<td>Proofreading app</td>
+<td>Yes</td>
+</tr>
+<tr class="even">
+<td><code>docs/</code></td>
+<td>Rendered book</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
 
 
 </section>

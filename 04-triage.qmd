@@ -1,3 +1,65 @@
 # Quality Triage
 
-Automatic confidence scoring with manual overrides in `data/triage_overrides.csv`.
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(knitr)
+pages <- read_csv("output/pages.csv", show_col_types = FALSE) |> select(-text, -text_marked)
+```
+
+Not every page needs the same attention. After OCR, each page is scored and placed in one of three tiers, so effort goes where it is needed.
+
+## Flagging words
+
+Tesseract reports a confidence for every word. A word is flagged for review if either of these holds:
+
+- its confidence is below 60, or
+- it is not in the `spelling` package's English dictionary.
+
+Names and places are not in the dictionary, so they are flagged too. That adds noise but is harmless: a flag only asks a person to look. The opposite error is not caught. A real word that OCR misreads as a different real word, with high confidence, is not flagged.
+
+## Tiers
+
+A page's tier depends on the share of its words that are flagged.
+
+| Tier | Rule | Treatment |
+|---|---|---|
+| A, manual | 25% or more of words flagged, fewer than 40 words, or forced | Type from the scan |
+| B, proofread | 10% to 25% flagged | Fix flagged words |
+| C, spot check | Under 10% flagged | Spot check only |
+
+"Forced" pages are listed in the `force_manual_pages` column of `data/volume_config.csv`: the 1966 front matter (pages 1 to 6) and the two-column newsletter pages in `vol3` (87 and 88), where tesseract's output is known to be unreliable regardless of its confidence.
+
+```{r}
+#| label: tbl-tiers
+#| tbl-cap: "Pages per tier and volume."
+pages |>
+  count(volume, tier) |>
+  pivot_wider(names_from = tier, values_from = n, values_fill = 0) |>
+  kable()
+```
+
+```{r}
+#| label: fig-confidence
+#| fig-cap: "Mean word confidence per page. Pages left of the main mass are the ones triage sends to people."
+ggplot(pages, aes(mean_conf)) +
+  geom_histogram(binwidth = 2) +
+  facet_wrap(vars(volume), ncol = 1) +
+  labs(x = "Mean word confidence (%)", y = "Pages")
+```
+
+The median page scores 92% to 94% mean confidence, with 5% to 8% of words flagged. Most tier A pages in `vol1` fall in pages 10 to 27, a section typed with a worn ribbon whose letters are broken but still legible to a person.
+
+## Limits
+
+The cutoffs above have not been tuned. Tuning needs hand-typed reference pages, which do not exist yet (see [Local OCR](05-ocr-local.qmd)). Treat the tiers as a sensible first sort, not a measured quality grade. A file of manual overrides, `data/triage_overrides.csv`, is planned so a person can move a page between tiers; it has not been created.
+
+## Code
+
+The tiering, draft text and review images are produced by one script. It reads the cached OCR results, marks flagged words as `[?word]` in the draft text, and draws red boxes on the page images of tiers A and B for the proofreading app.
+
+```{r}
+#| file: R/build_outputs.R
+#| eval: false
+```

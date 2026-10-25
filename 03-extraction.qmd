@@ -1,3 +1,72 @@
 # Page Extraction
 
-Convert each PDF to zero-padded 300 DPI PNGs (`vol1_p001.png`).
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(knitr)
+```
+
+Extraction turns each PDF page into a 300 DPI PNG named `vol1_p001.png`, ready for OCR. It has two parts: a quick inventory of every page, and, for the spread scans, cropping to the page that holds text.
+
+## Inventory
+
+Before extracting anything, each page is rendered at low resolution and profiled for ink amount, size and similarity to other pages. This finds blank pages, near-duplicate pages and the layout of each volume.
+
+One measurement choice mattered. Typewriter strokes are thin and wash out at low resolution, so an absolute darkness cutoff misses real text. "Ink" is therefore measured relative to each page's own median brightness.
+
+```{r}
+#| file: R/inventory.R
+#| eval: false
+```
+
+```{r}
+#| label: tbl-inventory
+#| tbl-cap: "Pages by orientation in each scan."
+read_csv("data/interim/page_inventory.csv", show_col_types = FALSE) |>
+  count(file, orientation, name = "pages") |>
+  kable()
+```
+
+`run_inventory()` at the end of the script writes one table, `data/interim/page_inventory.csv`, for all three files. Duplicate detection compares every page with every other page, including pages in other files.
+
+```{r}
+#| label: tbl-duplicates
+#| tbl-cap: "Page pairs flagged as near-duplicates (signature distance below 0.15)."
+read_csv("data/interim/page_inventory.csv", show_col_types = FALSE) |>
+  filter(possible_dup) |>
+  select(page_id, nearest_id, nearest_dist) |>
+  kable(digits = 3)
+```
+
+What the inventory found:
+
+- `vol2.pdf` has no blank or duplicate pages. Its first six pages are front matter (a three-page table of contents, an itinerary and a mail schedule); entries begin on page 7, giving 182 entry pages. A few sparse pages are short text, not blanks.
+- `vol1.pdf` and `vol3.pdf` carry text on the right half of every spread. In `vol1.pdf`, pages 1 and 44 to 46 are portrait pages.
+- Some pages look like duplicates: `vol1` pages 77 and 78, and 96 and 97 (near-identical). `vol1` page 102 also appears to repeat `vol3` page 1, but the match is weaker: each is the other's nearest page, at a distance of 0.165, just outside the 0.15 cutoff. It is recorded in the config. None has been removed yet.
+
+## Cropping spreads
+
+A spread contains a text page, a mostly blank facing page and a dark binding shadow. Splitting every spread down the middle would leave shadow in the OCR input, so the crop is detected per page:
+
+1. Render the spread at 100 DPI and find the spine, the darkest lines near the centre, plus any graded shadow touching it.
+2. Trim scan borders on the outer edge and at the top and bottom.
+3. Apply the detected box to a 300 DPI render of the same page.
+
+```{r}
+#| file: R/crop_spread.R
+#| eval: false
+```
+
+The method worked on nine test pages. It leaves some shadow at the left edge of `vol3` page 88 and a small dark corner on `vol3` page 60.
+
+## Writing the page images
+
+`prepare_page()` in the OCR script (shown in [Local OCR](05-ocr-local.qmd)) applies the right path for each page: crop for spreads, full-page render for portrait pages and the 1966 journal. The helper that reads page lists such as `1;44-46` from the config is shared by several scripts:
+
+```{r}
+#| file: R/utils.R
+#| eval: false
+```
+
+Page images are written to `data/pages/` and are not committed.

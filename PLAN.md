@@ -1,6 +1,6 @@
 # Plan: Pomeroy Journals OCR Pipeline and Quarto Book
 
-Single planning document. It replaces `rstudio_ocr_workflow_blueprint.md` (v1) and `updated_ocr_workflow_blueprint.md` (v2, written from the 1966 sample only). Last updated Oct 23, 2026.
+Single planning document. It replaces `rstudio_ocr_workflow_blueprint.md` (v1) and `updated_ocr_workflow_blueprint.md` (v2, written from the 1966 sample only). Last updated Oct 24, 2026.
 
 ## 1. Decisions (from interview)
 
@@ -72,7 +72,8 @@ v2 was derived from `vol2.pdf` alone, so it has no knowledge of the spread scans
 ```text
 pomeroy-ww2/
 ├── _quarto.yml, index.qmd, 01-overview ... 08-assembly, 09-vol1, 10-vol2, 11-vol3, references
-├── R/                          extract, crop_spread, enhance, ocr, triage, llm, clean, assemble
+├── R/                          inventory, crop_spread, ocr_pipeline, build_outputs, proofread (planned: llm, assemble)
+├── proofread/app.R             Shiny proofreading app (scan beside editable text)
 ├── _targets.R                  pipeline (book reads cached outputs only)
 ├── data/
 │   ├── raw_pdf/                GITIGNORED: vol1.pdf, vol2.pdf, vol3.pdf
@@ -88,7 +89,7 @@ pomeroy-ww2/
 
 ## 5. Steps
 
-Status: steps 1-2 done, step 3 partly done (sample only).
+Status (Oct 24): steps 1-4 and 7-8 done in a first pass (eng only, psm 3, untuned); step 11 and the corrections part of step 10 built; steps 5, 6, 9, 12, 13 not started. See section 7.
 
 1. **Repo setup** (done). Folders, `.gitignore` (scans ignored, `docs/` tracked), Quarto scaffold.
 2. **Environment** (done). Packages installed, Tesseract works (`eng`, `osd`). Still to do: `deu`/`fra` language data, API keys in `.Renviron`, `renv`.
@@ -100,9 +101,9 @@ Status: steps 1-2 done, step 3 partly done (sample only).
 8. **Full local OCR** with the chosen settings, saving word-level data. Re-run enhanced OCR only on pages that triage flags, and keep the result only if it scores better.
 9. **LLM transcription.** Front matter, two-column pages and pages that still fail. Compare 2-3 providers on the ground-truth pages (error rate and cost), cache every response so reruns don't re-bill.
 10. **Cleaning.** Strip headers, handle hyphenation conservatively, flag (do not rewrite) suspect words, add `[p. N]` markers, build the corrections CSV workflow, optional spell-check with a names/places dictionary.
-11. **Proofreading view.** Quarto page: image beside text, low-confidence words highlighted.
+11. **Proofreading view** (done, Shiny instead of a Quarto page; see section 7).
 12. **Assembly.** One table of volume, page, text, engine, confidence. Export per-volume and combined DOCX (officer, styled headings, title page), searchable PDF, CSV.
-13. **Book and publish.** Render transcription chapters from the CSV, `freeze: auto`, download links, GitHub Pages from `docs/`, real `repo-url`.
+13. **Book and publish.** Render transcription chapters from the CSV, `freeze: auto`, download links, GitHub Pages from `docs/`, real `repo-url`. Status Oct 24: methods chapters 01-08 drafted and rendering; transcription chapters have status tables with the text chunk switched off until review; downloads, real repo URL and bibliography still to do.
 
 ## 6. Open items
 
@@ -111,3 +112,32 @@ Status: steps 1-2 done, step 3 partly done (sample only).
 - Use `targets` for orchestration (recommended: 378 pages, cached LLM calls) and `renv`.
 - Real repo URL; PDF render engine (LaTeX or Typst).
 - Which LLM providers and keys to use for the comparison.
+- Wire `apply_corrections()` into DOCX, searchable PDF, CSV and the book chapters (step 12); not built yet.
+- Decide how to treat tier C pages (no proofreading pass by default; the app can show them by ticking tier C).
+
+## 7. Proofreading app and corrections workflow (built Oct 24, 2026)
+
+Chosen over a static HTML page because it writes straight to `data/corrections.csv`, with no manual download-and-save step. Tested only through `shiny::testServer()`, not yet in a browser.
+
+**Launch:** `source("R/proofread.R"); run_proofread()` from the project root. It needs `output/pages.csv` (from `R/build_outputs.R`) and the images in `data/pages/` and `data/pages/review/`.
+
+**What it does** (`proofread/app.R`):
+- Left: the page scan, either half-size with flagged words boxed in red (`data/pages/review/`) or the clean 300 DPI crop. Zoom slider. Tier C pages have no review image and fall back to the clean one.
+- Right: editable text box, starting from the saved correction if one exists, otherwise the OCR draft with `[?word]` marks.
+- Sidebar filters: tier (default A and B), volume, status (all, to do, done); page dropdown with previous and next; progress count for tier A and B pages.
+- Save, Save and next, Reset to OCR draft. Edits are auto-saved when you leave a page (pages you only view are not recorded). A badge above the text box shows unsaved changes, and the browser warns before the tab is closed with unsaved edits.
+
+**`data/corrections.csv`** (committed, not gitignored):
+
+| Column | Meaning |
+|---|---|
+| `page_id` | e.g. `vol1_p016`; one row per page, latest save wins |
+| `status` | `edited` (text differs from the OCR draft) or `confirmed` (checked, saved unchanged) |
+| `corrected_text` | full page text as saved, including any `[?word]` marks left unresolved |
+| `saved_at` | timestamp |
+
+Writes go to a `.tmp` file and are renamed, so a crash cannot corrupt the file.
+
+**Merge:** `apply_corrections()` in `R/proofread.R` joins the corrections to `output/pages.csv` and returns `final_text` (correction if present, else `text_marked`) and `source` (`edited`, `confirmed` or `ocr_draft`). Page-level replacement, so the OCR text is never altered silently and every change is traceable. Leftover `[?word]` marks stay visible in the output.
+
+**Known gaps:** corrections are whole-page, so re-running OCR with better settings makes old corrections stale for those pages (they still win in the merge). `data/triage_overrides.csv` is still not created.
