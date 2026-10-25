@@ -1,0 +1,112 @@
+POMEROY JOURNALS: PROOFREADING APP, BASIC USER GUIDE
+====================================================
+
+WHAT IT IS
+A local Shiny app for checking and correcting the OCR text. The scanned page
+is on the left, the editable text is on the right. Your edits are saved to
+data/corrections.csv and never change the original OCR output.
+
+
+BEFORE YOU START
+1. Open the RStudio project (pomeroy-ww2.Rproj) so the working directory is
+   the project root.
+2. The OCR outputs must exist. This file must be present:
+       output/pages.csv
+   If it is missing, run the pipeline (targets::tar_make()) or
+   build_outputs() first.
+
+
+LAUNCH
+In the R console, from the project root:
+
+    source("R/proofread.R")
+    run_proofread()
+
+The app opens in your web browser. To stop it, click the red stop button in
+the RStudio console (or press Esc), then close the browser tab.
+
+If you are not in the project root, pass the path:
+
+    run_proofread(root = "C:/Users/Benjamin/OneDrive/Documents/GitHub_Local/misc/pomeroy-ww2")
+
+
+THE SCREEN
+Left sidebar (filters and navigation):
+  Tier      A = needs manual typing (OCR mostly failed)
+            B = proofread (many flagged words)
+            C = spot check (mostly clean)
+            Default shows A and B.
+  Volume    vol1, vol2, vol3 (tick the ones you want).
+  Status    All, To do (not saved yet), Done (saved).
+  Page      Drop-down list. Labels look like "vol1 p10 [A]" and show a
+            "done" appended once the page is saved.
+  Previous / Next    Move through the filtered list.
+  Image     "Flagged words boxed" shows red boxes around words the OCR was
+            unsure about (half size). "Clean" shows the full-resolution scan.
+  Zoom      50% to 250%. Scroll inside the image panel to move around.
+  Progress  Count of tier A/B pages saved so far.
+
+Main area:
+  Left      The scan of the page (full-screen button in the card header).
+  Right     The OCR text, editable, in a monospace font.
+
+
+READING THE OCR TEXT
+  [p. N]     Page marker. Keep it.
+  [?word]    The OCR was unsure about this word (low confidence or not in
+             the dictionary). Check it against the scan. Names and places
+             are often flagged even when correct.
+  Remove the brackets and question mark once you have confirmed or fixed a
+  word. Any [?word] marks you leave stay in the final text, so unresolved
+  words are never hidden.
+
+
+WORKFLOW
+1. Pick the tiers and volume you want (start with vol1, tier A).
+2. Compare the scan with the text and edit the text box.
+3. Click "Save and next" to save and move to the next page in your list.
+   "Save" saves and stays on the page.
+4. If the OCR is hopeless, type the page from the scan. If you made a mess,
+   "Reset to OCR draft" restores the original text for that page (it is not
+   saved until you click Save).
+5. A page that is already correct: click Save to mark it confirmed.
+
+Saving:
+  - Edits also auto-save when you leave a page (Previous, Next or the Page
+    list). Pages you only view are NOT recorded.
+  - A badge above the text box shows when there are unsaved changes. The
+    browser warns you if you try to close the tab with unsaved edits.
+  - One row per page is kept in data/corrections.csv; the latest save wins.
+  - Columns: page_id, status (edited or confirmed), corrected_text, saved_at.
+
+
+IMPORTANT RULES
+  - Never delete or overwrite data/corrections.csv. It holds your real
+    proofreading work. Back it up now and then (it is tracked in git, so a
+    commit is a backup).
+  - Do not edit the file by hand while the app is running.
+  - If you re-run OCR for a volume (for example vol2 with German and French
+    after installing those languages), do it BEFORE proofreading that
+    volume. A saved correction replaces the new OCR text for that page.
+  - Typing the text exactly as typed on the page is the aim: keep original
+    spelling and punctuation, even if it looks wrong.
+
+
+USING THE CORRECTIONS
+To merge your corrections with the OCR draft (one final text per page):
+
+    source("R/proofread.R")
+    final <- apply_corrections()
+
+This adds two columns to the page table: final_text and source
+(ocr_draft, edited or confirmed).
+
+
+TROUBLESHOOTING
+  "output/pages.csv" error on launch: run the pipeline first, and make sure
+      the console working directory is the project root (getwd()).
+  App does not open a browser: copy the http://127.0.0.1:xxxx address shown
+      in the console into your browser.
+  Images do not appear: the review images and page crops are made by the
+      pipeline (data/pages/ and data/pages/review/). Re-run the pipeline.
+  Missing packages: install shiny, bslib, readr, dplyr, stringr, tibble.

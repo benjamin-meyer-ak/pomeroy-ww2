@@ -113,3 +113,13 @@ Goal from owner: the book must contain all code so a rerun from the same PDFs gi
 4. Decide duplicates to drop and check vol1/vol3 front matter; confirm WWII volume numbering.
 5. Ground-truth pages, tune psm/languages by character error rate; vision LLM comparison on tier A pages (confirm owner is OK sending images externally).
 6. Create `triage_overrides.csv`, names/places dictionary, real `repo-url`, PDF engine choice, renv activation decision, update `PLAN.md`.
+
+## Secondary goal: general-purpose browser tool (Oct 25, 2026)
+
+Owner wants the OCR + triage + proofreading software made available to anyone, ideally in a web browser with no RStudio install. Journals remain the primary goal and the worked example/test case.
+
+- Survey (quick, not exhaustive): no off-the-shelf tool combines bulk OCR of typewritten/printed volumes, automatic triage tiers, flagged low-confidence words, a side-by-side proofreader writing a corrections layer, and a reproducible record. Nearest: Transkribus (hosted, handwriting-focused, credits), eScriptorium and OCR4all (heavy self-hosted, library-oriented), PenParse and HandwritingOCR (commercial web apps with confidence highlighting/editing, handwriting-focused), Konomic/OnlineOCR (Tesseract in browser, no review workflow), Aletheia/LAREX (layout annotation).
+- Routes considered: (1) hosted Shiny app plus Docker image (recommended first; smallest step, reuses Tesseract/magick/Shiny code; needs per-user storage, privacy plan, compute cost at ~2.6 s/page); (2) client-side JS app with tesseract.js and PDF.js (no uploads, free hosting on GitHub Pages, biggest rewrite); (3) shinylive/webR (probably unworkable: tesseract and magick likely unavailable in webR, unverified).
+- Generalization work needed: project/upload flow instead of `volume_config.csv`, automatic spread/layout detection, per-project storage, file-based corrections format, bring-your-own-API-key vision LLM support.
+- Decisions pending: permissive license (MIT or Apache), tool name (avoid collisions), whether the journals take priority over generalization (suggested: finish journals first).
+- Nothing built yet for this goal. Suggested next: plan doc for the standalone Shiny app (structure, upload flow, layout detection, Dockerfile); webR feasibility check; add a competitive-gap note to PLAN.md.
